@@ -37,7 +37,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 public class DomainConfig {
 
-    public static final String[] PUBLIC_URLS = {"/user/add", "/login","/property/**" , "/users/**"};
+    public static final String[] PUBLIC_URLS = { "/users/verify-otp" ,"/user/register", "/login", "/users/send-otp"/*, "/users/**"*/};
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
@@ -52,9 +52,9 @@ public class DomainConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(
                         request -> request.requestMatchers(PUBLIC_URLS).permitAll().requestMatchers(HttpMethod.GET).permitAll()
-                                .requestMatchers(HttpMethod.POST).permitAll()
+                                /*.requestMatchers(HttpMethod.POST).permitAll()
                                 .requestMatchers(HttpMethod.PUT).permitAll()
-                                .requestMatchers(HttpMethod.DELETE).permitAll()
+                                .requestMatchers(HttpMethod.DELETE).permitAll()*/
                                 .anyRequest().authenticated())
                 .exceptionHandling(handling -> handling.authenticationEntryPoint(this.jwtAuthenticationEntryPoint))
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

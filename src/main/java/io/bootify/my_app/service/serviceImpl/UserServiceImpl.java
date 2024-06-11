@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void createUser(UserDto userDto) throws UserAlreadyExistException {
+    public UserDto createUser(UserDto userDto) throws UserAlreadyExistException {
 
         User existingUser = userRepo.findByEmail(userDto.getEmail());
 
@@ -60,5 +60,6 @@ public class UserServiceImpl implements UserService {
             /*return new UserDto(registeredUser);*/
         }
 
+        return userDto;
     }
 }
