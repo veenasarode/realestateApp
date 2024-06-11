@@ -121,4 +121,24 @@ public class UserController {
     }
 
 
+    @PutMapping("/update-profile/{userId}")
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto , @PathVariable Integer userId)
+    {
+        UserDto updatedUser = userService.updateUser(userDto , userId);
+
+        ResponseEntity<UserDto> responseEntity = new ResponseEntity<>(userDto , HttpStatus.OK);
+
+        return responseEntity;
+    }
+
+
+    @DeleteMapping("delete/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer userId)
+    {
+        userService.deleteUser(userId);
+
+        ResponseEntity<Void> responseEntity = new ResponseEntity<>(null , HttpStatus.NO_CONTENT);
+
+        return responseEntity;
+    }
 }
