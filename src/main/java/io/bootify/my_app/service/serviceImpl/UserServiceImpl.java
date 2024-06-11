@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -61,5 +62,36 @@ public class UserServiceImpl implements UserService {
         }
 
         return userDto;
+    }
+
+    @Override
+    public UserDto updateUser(UserDto userDto, Integer userId) {
+
+        Optional<User> optionalUser = userRepo.findById(userId);
+
+        UserDto  updatedUser = null;
+
+        if(optionalUser.isPresent())
+        {
+            User user = optionalUser.get();//data from database
+
+            user.setName(userDto.getName());
+            user.setAddress(userDto.getAddress());
+            user.setEmail(userDto.getEmail());
+            user.setPassword(userDto.getPassword());
+            user.setMoNumber(userDto.getMoNumber());
+
+            updatedUser = new UserDto(user);
+
+            userRepo.save(user);
+
+        }
+        return updatedUser;
+    }
+
+    @Override
+    public void deleteUser(Integer userId) {
+
+        userRepo.deleteById(userId);
     }
 }

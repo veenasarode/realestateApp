@@ -6,4 +6,8 @@ import io.bootify.my_app.exception.UserAlreadyExistException;
 
 public interface UserService {
     public UserDto createUser(UserDto userDto) throws UserAlreadyExistException;
+
+    public UserDto updateUser(UserDto userDto , Integer userId);
+
+   public void deleteUser(Integer userId);
 }
