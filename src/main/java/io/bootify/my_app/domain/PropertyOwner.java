@@ -1,5 +1,6 @@
 package io.bootify.my_app.domain;
 
+import io.bootify.my_app.dto.PropertyOwnerDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +18,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class ProprtyWoner {
+public class PropertyOwner {
 
     @Id
     @Column(nullable = false, updatable = false)
@@ -40,4 +41,10 @@ public class ProprtyWoner {
     @OneToMany(mappedBy = "proprtyWonerProprtyWoner")
     private Set<Lease> proprtyWonerProprtyWonerLeases;
 
+
+    public PropertyOwner(PropertyOwnerDto dto) {
+        this.proprtyWonerId = dto.getPropertyOwnerId();
+        this.moNumber = dto.getMoNumber();
+        this.address = dto.getAddress();
+    }
 }

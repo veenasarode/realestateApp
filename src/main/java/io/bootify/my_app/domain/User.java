@@ -44,7 +44,7 @@ public class User implements UserDetails {
     private String password;
 
     @OneToMany(mappedBy = "userUser")
-    private Set<ProprtyWoner> userUserProprtyWoners;
+    private Set<PropertyOwner> userUserPropertyOwners;
 
     @OneToMany(mappedBy = "userUser")
     private Set<Property> userUserProperties;

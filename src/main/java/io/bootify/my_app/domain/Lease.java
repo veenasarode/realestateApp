@@ -65,7 +65,7 @@ public class Lease {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proprty_woner_proprty_woner_id", nullable = false)
-    private ProprtyWoner proprtyWonerProprtyWoner;
+    private PropertyOwner proprtyWonerPropertyOwner;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "broker_profile_id", nullable = false)
