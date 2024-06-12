@@ -5,6 +5,7 @@ import io.bootify.my_app.domain.Roles;
 import io.bootify.my_app.domain.User;
 import io.bootify.my_app.domain.UserRole;
 import io.bootify.my_app.dto.UserDto;
+import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.exception.UserAlreadyExistException;
 import io.bootify.my_app.repos.RolesRepo;
 import io.bootify.my_app.repos.UserRepo;
@@ -64,6 +65,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getUserById(Integer userId) throws ResourceNotFoundException {
+
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User","Id",userId));
+
+        return new UserDto(user);
+    }
+
+    @Override
     public UserDto updateUser(UserDto userDto, Integer userId) {
 
         Optional<User> optionalUser = userRepo.findById(userId);
@@ -89,8 +99,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(Integer userId) {
+    public void deleteUser(Integer userId) throws ResourceNotFoundException {
 
-        userRepo.deleteById(userId);
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User","Id",userId));
+
+        userRepo.delete(user);
     }
 }

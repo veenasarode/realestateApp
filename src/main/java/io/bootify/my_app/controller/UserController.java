@@ -5,6 +5,7 @@ import io.bootify.my_app.domain.EmailVerification;
 import io.bootify.my_app.dto.UserDto;
 import io.bootify.my_app.exception.InvalidOtpException;
 import io.bootify.my_app.exception.OtpExpiredException;
+import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.exception.UserAlreadyExistException;
 import io.bootify.my_app.repos.EmailVerificationRepository;
 import io.bootify.my_app.service.EmailService;
@@ -120,6 +121,11 @@ public class UserController {
         }
     }
 
+    @GetMapping("/getUser/{userId}")
+    public ResponseEntity<UserDto> getSingleUsers(@PathVariable Integer userId) throws ResourceNotFoundException {
+        return ResponseEntity.ok(this.userService.getUserById(userId));
+    }
+
 
     @PutMapping("/update-profile/{userId}")
     public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto , @PathVariable Integer userId)
@@ -133,8 +139,8 @@ public class UserController {
 
 
     @DeleteMapping("delete/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer userId)
-    {
+    public ResponseEntity<Void> deleteUser(@PathVariable Integer userId) throws ResourceNotFoundException {
+
         userService.deleteUser(userId);
 
         ResponseEntity<Void> responseEntity = new ResponseEntity<>(null , HttpStatus.NO_CONTENT);
