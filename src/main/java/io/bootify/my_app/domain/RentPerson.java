@@ -1,5 +1,6 @@
 package io.bootify.my_app.domain;
 
+import io.bootify.my_app.dto.RentPersonDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -40,7 +41,14 @@ public class RentPerson {
     @JoinColumn(name = "user_user_id", nullable = false)
     private User userUser;
 
-    @OneToMany(mappedBy = "rentPersonRentPerson")
-    private Set<Lease> rentPersonRentPersonLeases;
+    @OneToMany(mappedBy = "rentPerson")
+    private Set<Lease> rentPersonLease;
 
+    public RentPerson(RentPersonDto rentPersonDto) {
+        this.rentPerson = rentPersonDto.getRentPersonId();
+        this.name = rentPersonDto.getName();
+        this.address = rentPersonDto.getAddress();
+        this.moNumber = rentPersonDto.getMoNumber();
+        this.rentPersoncol = rentPersonDto.getRentPersoncol();
+    }
 }
