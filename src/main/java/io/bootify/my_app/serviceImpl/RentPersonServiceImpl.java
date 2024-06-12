@@ -1,4 +1,4 @@
-package io.bootify.my_app.service.serviceImpl;
+package io.bootify.my_app.serviceImpl;
 
 import io.bootify.my_app.domain.Lease;
 import io.bootify.my_app.domain.RentPerson;

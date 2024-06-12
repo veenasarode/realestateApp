@@ -1,4 +1,4 @@
-package io.bootify.my_app.service.serviceImpl;
+package io.bootify.my_app.serviceImpl;
 
 
 import io.bootify.my_app.domain.Roles;
@@ -41,7 +41,6 @@ public class UserServiceImpl implements UserService {
             Roles role = new Roles();
             role.setId(44);
             role.setName("NORMAL");
-
             UserRole userRole = new UserRole();
             userRole.setUser(user);
             userRole.setRole(role);

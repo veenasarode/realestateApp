@@ -35,11 +35,11 @@ public class PropertyOwner {
     @JoinColumn(name = "user_user_id", nullable = false)
     private User userUser;
 
-    @OneToMany(mappedBy = "proprtyWoner")
-    private Set<Property> proprtyWoner;
+    @OneToMany(mappedBy = "proprtyWonerProprtyWoner")
+    private Set<Property> proprtyWonerProprtyWonerProperties;
 
-    @OneToMany(mappedBy = "proprtyWoner")
-    private Set<Lease> proprtyWonerLeases;
+    @OneToMany(mappedBy = "proprtyWonerProprtyWoner")
+    private Set<Lease> proprtyWonerProprtyWonerLeases;
 
 
     public PropertyOwner(PropertyOwnerDto dto) {
