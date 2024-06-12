@@ -1,4 +1,4 @@
-package io.bootify.my_app.service.serviceImpl;
+package io.bootify.my_app.serviceImpl;
 
 import io.bootify.my_app.domain.Lease;
 import io.bootify.my_app.domain.RentPerson;
@@ -71,7 +71,7 @@ public class RentPersonServiceImpl implements RentPersonService {
             rentPerson.setMoNumber(rentPersonDTO.getMoNumber());
             rentPerson.setRentPersoncol(rentPersonDTO.getRentPersoncol());
             rentPerson.setUserUser(user);
-            rentPerson.setRentPersonRentPersonLeases(leases);
+            rentPerson.setRentPersonLease(leases);
 
             RentPerson updatedRentPerson = rentPersonRepository.save(rentPerson);
            RentPersonDto rentPersonDto=new RentPersonDto(updatedRentPerson);
