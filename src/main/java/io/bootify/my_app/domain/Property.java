@@ -58,7 +58,7 @@ public class Property {
     private PropertyOwner proprtyWoner;
 
     @OneToMany(mappedBy = "propertyProperty")
-    private Set<Lease> propertyLeases;
+    private Set<Lease> propertyLease;
 
     @OneToMany(mappedBy = "propertyAgreement")
     private Set<Agreement> agreements;
