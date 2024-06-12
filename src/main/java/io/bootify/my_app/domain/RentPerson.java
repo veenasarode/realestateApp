@@ -41,8 +41,8 @@ public class RentPerson {
     @JoinColumn(name = "user_user_id", nullable = false)
     private User userUser;
 
-    @OneToMany(mappedBy = "rentPersonRentPerson")
-    private Set<Lease> rentPersonRentPersonLeases;
+    @OneToMany(mappedBy = "rentPerson")
+    private Set<Lease> rentPersonLease;
 
     public RentPerson(RentPersonDto rentPersonDto) {
         this.rentPerson = rentPersonDto.getRentPersonId();

@@ -55,7 +55,7 @@ public class Property {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "proprty_woner_proprty_woner_id", nullable = false)
-    private PropertyOwner proprtyWonerPropertyOwner;
+    private PropertyOwner proprtyWoner;
 
     @OneToMany(mappedBy = "propertyProperty")
     private Set<Lease> propertyPropertyLeases;
