@@ -2,9 +2,13 @@ package io.bootify.my_app.serviceImpl;
 
 
 import io.bootify.my_app.domain.Property;
+import io.bootify.my_app.domain.PropertyOwner;
+import io.bootify.my_app.domain.User;
 import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.exception.PropertyNotFoundException;
 import io.bootify.my_app.repos.PropertyRepository;
+import io.bootify.my_app.repos.ProprtyWonerRepository;
+import io.bootify.my_app.repos.UserRepo;
 import io.bootify.my_app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,12 +21,24 @@ import java.util.stream.Collectors;
 public class PropertyServiceImpl implements PropertyService {
     @Autowired
     private PropertyRepository propertyRepository;
-
+    @Autowired
+    private ProprtyWonerRepository proprtyWonerRepository;
+    @Autowired
+    private UserRepo userRepo;
     @Override
     public String addProperty(PropertyDto propertyDto) {
         try {
+            User user = userRepo.findById(propertyDto.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            PropertyOwner propertyOwner = proprtyWonerRepository.findById(propertyDto.getPropertyOwnerId())
+                    .orElseThrow(() -> new RuntimeException("Property owner not found"));
             Property property=new Property(propertyDto);
+           /* this.userRepo.save(user);
             this.propertyRepository.save(property);
+            this.proprtyWonerRepository.save(propertyOwner);*/
+            property.setUserUser(user);
+            property.setProprtyWoner(propertyOwner);
+            propertyRepository.save(property);
             return "success";
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -31,26 +47,18 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public String updateProperty(PropertyDto propertyDto,Integer propertyId) {
         try {
-            // Retrieve the property from the database based on its ID
             Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
-
-            // Check if the property exists
             if (optionalProperty.isPresent()) {
-                // Get the property object from Optional
                 Property property = optionalProperty.get();
 
-                // Update the fields of the property with values from the provided PropertyDto
                 property.setArea(propertyDto.getArea());
-              //  property.setPrice(propertyDto.getPrice());
                 property.setName(propertyDto.getName());
                 property.setType(propertyDto.getType());
-
-                // Save the updated property back to the database
+                property.setAddress(propertyDto.getAddress());
                 propertyRepository.save(property);
 
                 return "success";
             } else {
-                // If property with the provided ID is not found
                 throw new PropertyNotFoundException("Property not found with ID: " + propertyDto.getPropertyId());
             }
         } catch (Exception e) {
@@ -64,7 +72,7 @@ public class PropertyServiceImpl implements PropertyService {
     public List<PropertyDto> getAllProperties() {
         List<Property> properties = propertyRepository.findAll();
         return properties.stream()
-                .map(PropertyDto::new) // Using constructor reference
+                .map(PropertyDto::new)
                 .collect(Collectors.toList());
     }
 

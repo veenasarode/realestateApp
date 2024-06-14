@@ -1,23 +1,16 @@
 package io.bootify.my_app.domain;
 
 import io.bootify.my_app.dto.RentPersonDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import java.util.Set;
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class RentPerson {
 
     @Id
@@ -41,8 +34,8 @@ public class RentPerson {
     @JoinColumn(name = "user_user_id", nullable = false)
     private User userUser;
 
-    @OneToMany(mappedBy = "rentPerson")
-    private Set<Lease> rentPersonLease;
+    /*@OneToMany(mappedBy = "rentPerson")
+    private Set<Lease> rentPersonLease;*/
 
     public RentPerson(RentPersonDto rentPersonDto) {
         this.rentPerson = rentPersonDto.getRentPersonId();

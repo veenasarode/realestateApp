@@ -8,7 +8,7 @@ import io.bootify.my_app.exception.PropertyNotFoundException;
 
 import java.util.List;
 
-public interface PropertyService  {
+public interface PropertyService {
    public String addProperty(PropertyDto propertyDto);
 
 

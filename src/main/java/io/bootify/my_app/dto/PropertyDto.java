@@ -2,11 +2,12 @@ package io.bootify.my_app.dto;
 
 
 import io.bootify.my_app.domain.Property;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,28 +16,19 @@ import lombok.Setter;
 public class PropertyDto {
 
     private Integer propertyId;
-
     private String name;
-
     private String address;
-
-
     private String type;
-
-
     private String status;
-
-
     private String area;
-
-
     private String city;
-
-
     private String comments;
-
-
     private String flore;
+    private Integer userId;
+    private Integer propertyOwnerId;
+
+
+    private Set<LeaseDto> propertyLeases;
 
     public PropertyDto(Property property){
         this.propertyId = property.getPropertyId();

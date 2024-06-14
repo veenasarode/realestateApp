@@ -2,12 +2,12 @@ package io.bootify.my_app.dto;
 
 import io.bootify.my_app.domain.RentPerson;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class RentPersonDto {
     private Integer rentPersonId;
     private String name;
@@ -15,7 +15,7 @@ public class RentPersonDto {
     private String moNumber;
     private String rentPersoncol;
     private Integer userId;
-    private Set<Integer> leaseIds;
+  //  private Set<Integer> leaseIds;
 
     public RentPersonDto(RentPerson rentPerson){
         this.rentPersonId = rentPerson.getRentPerson();

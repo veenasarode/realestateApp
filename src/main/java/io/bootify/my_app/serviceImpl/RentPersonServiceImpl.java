@@ -1,6 +1,5 @@
 package io.bootify.my_app.serviceImpl;
 
-import io.bootify.my_app.domain.Lease;
 import io.bootify.my_app.domain.RentPerson;
 import io.bootify.my_app.domain.User;
 import io.bootify.my_app.dto.RentPersonDto;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,19 +40,24 @@ public class RentPersonServiceImpl implements RentPersonService {
 
     @Override
     public RentPersonDto createRentPerson(RentPersonDto rentPersonDto) {
+        // Find the user by ID or throw an exception if not found
         User user = userRepository.findById(rentPersonDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        Set<Lease> leases = rentPersonDto.getLeaseIds().stream()
-                .map(leaseId -> leaseRepository.findById(leaseId)
-                        .orElseThrow(() -> new RuntimeException("Lease not found with ID: " + leaseId)))
-                .collect(Collectors.toSet());
-
+        // Create a new RentPerson entity from the DTO
         RentPerson rentPerson = new RentPerson(rentPersonDto);
-        RentPerson savedRentPerson = rentPersonRepository.save(rentPerson);
-        RentPersonDto rentPersonDto1=new RentPersonDto(savedRentPerson);
-        return rentPersonDto1;
 
+        // Set the user field on the RentPerson entity
+        rentPerson.setUserUser(user);
+
+        // Save the RentPerson entity to the repository
+        RentPerson savedRentPerson = rentPersonRepository.save(rentPerson);
+
+        // Convert the saved RentPerson entity back to a DTO
+        RentPersonDto rentPersonDto1 = new RentPersonDto(savedRentPerson);
+
+        // Return the DTO
+        return rentPersonDto1;
     }
 
     @Override
@@ -63,7 +66,7 @@ public class RentPersonServiceImpl implements RentPersonService {
         if (optionalRentPerson.isPresent()) {
             User user = userRepository.findById(rentPersonDTO.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
-            Set<Lease> leases = leaseRepository.findAllById(rentPersonDTO.getLeaseIds()).stream().collect(Collectors.toSet());
+          //  Set<Lease> leases = leaseRepository.findAllById(rentPersonDTO.getLeaseIds()).stream().collect(Collectors.toSet());
 
             RentPerson rentPerson = optionalRentPerson.get();
             rentPerson.setName(rentPersonDTO.getName());
@@ -71,7 +74,7 @@ public class RentPersonServiceImpl implements RentPersonService {
             rentPerson.setMoNumber(rentPersonDTO.getMoNumber());
             rentPerson.setRentPersoncol(rentPersonDTO.getRentPersoncol());
             rentPerson.setUserUser(user);
-            rentPerson.setRentPersonLease(leases);
+          //  rentPerson.setRentPersonLease(leases);
 
             RentPerson updatedRentPerson = rentPersonRepository.save(rentPerson);
            RentPersonDto rentPersonDto=new RentPersonDto(updatedRentPerson);

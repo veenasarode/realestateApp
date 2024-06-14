@@ -1,22 +1,18 @@
 package io.bootify.my_app.domain;
 
 import io.bootify.my_app.dto.LeaseDto;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import java.time.LocalDate;
+import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDate;
 
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Lease {
 
     @Id
@@ -55,9 +51,9 @@ public class Lease {
     @JoinColumn(name = "property_property_id", nullable = false)
     private Property propertyProperty;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+/*    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rent_person_rent_person_id", nullable = false)
-    private RentPerson rentPerson;
+    private RentPerson rentPerson;*/
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_user_id", nullable = false)

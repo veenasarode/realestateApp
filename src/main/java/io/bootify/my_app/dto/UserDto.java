@@ -2,7 +2,6 @@ package io.bootify.my_app.dto;
 
 
 import io.bootify.my_app.domain.User;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,4 +39,6 @@ public class UserDto {
         this.password = user.getPassword();
 
     }
+
+
 }
