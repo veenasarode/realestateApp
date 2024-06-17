@@ -29,7 +29,7 @@ public class RentPersonController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/add")
     public RentPersonDto createRentPerson(@RequestBody RentPersonDto rentPersonDTO) {
         return rentPersonService.createRentPerson(rentPersonDTO);
     }
