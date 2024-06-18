@@ -1,5 +1,6 @@
 package io.bootify.my_app.controller;
 
+import io.bootify.my_app.dto.BrokerProfileDto;
 import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.exception.PropertyNotFoundException;
 import io.bootify.my_app.service.PropertyService;
@@ -20,9 +21,14 @@ public class PropertyController {
 
     @PostMapping("/add")
     public ResponseEntity<?> createProperty(@RequestBody PropertyDto propertyDto){
-        this.propertyService.addProperty(propertyDto);
-        return ResponseEntity.ok("ok");
+       try {
+           this.propertyService.addProperty(propertyDto);
+           return ResponseEntity.ok("Property Added Succesfully");
+       } catch (RuntimeException e){
+           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add property: " + e.getMessage());
+       }
     }
+
 
 
     @GetMapping("/getById")
@@ -30,8 +36,8 @@ public class PropertyController {
         try {
             PropertyDto propertyById = this.propertyService.getPropertyById(propertyId);
             return new ResponseEntity<>(propertyId, HttpStatus.OK);
-        } catch (PropertyNotFoundException e) {
-            throw new PropertyNotFoundException("Broker profile not found with ID: " + propertyId);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get property by id: " + e.getMessage());
         }
     }
 
@@ -45,9 +51,9 @@ public class PropertyController {
     public ResponseEntity<String> editProperty(@RequestBody PropertyDto propertyDto, @RequestParam Integer propertyId) {
         try {
             this.propertyService.updateProperty(propertyDto, propertyId);
-            return ResponseEntity.ok("Broker profile updated successfully.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update broker profile: " + e.getMessage());
+            return ResponseEntity.ok("Property updated successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update property: " + e.getMessage());
         }
     }
 
@@ -56,8 +62,9 @@ public class PropertyController {
         try {
             this.propertyService.deletePropertyById(propertyId);
             return ResponseEntity.ok(" Property deleted successfully.");
-        } catch (PropertyNotFoundException e) {
-            throw new PropertyNotFoundException("Property not found with ID: " + propertyId);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete property: " + e.getMessage());
+
         }
     }
 }

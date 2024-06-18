@@ -19,8 +19,12 @@ public class LeaseController {
 
     @PostMapping("/add")
     public ResponseEntity<?> createLease(@RequestBody LeaseDto leaseDto){
-        this.leaseService.addLease(leaseDto);
-        return ResponseEntity.ok("Lease added successfully.");
+        try {
+            this.leaseService.addLease(leaseDto);
+            return ResponseEntity.ok("Lease added successfully.");
+        }catch (RuntimeException e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed create Lease: " + e.getMessage());
+        }
     }
 
     @GetMapping("/getById")
@@ -28,8 +32,8 @@ public class LeaseController {
         try {
             LeaseDto leaseById = this.leaseService.getLeaseById(leaseId);
             return new ResponseEntity<>(leaseById, HttpStatus.OK);
-        } catch (LeaseNotFoundException e) {
-            throw new LeaseNotFoundException("Lease not found with ID: " + leaseId);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed get Lease by id: " + e.getMessage());
         }
     }
 
@@ -44,7 +48,7 @@ public class LeaseController {
         try {
             this.leaseService.updateLease(leaseDto, leaseId);
             return ResponseEntity.ok("Lease updated successfully.");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update lease: " + e.getMessage());
         }
     }
@@ -54,8 +58,8 @@ public class LeaseController {
         try {
             this.leaseService.deleteLeaseById(leaseId);
             return ResponseEntity.ok("Lease deleted successfully.");
-        } catch (LeaseNotFoundException e) {
-            throw new LeaseNotFoundException("Lease not found with ID: " + leaseId);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed get Lease by id: " + e.getMessage());
         }
     }
 }

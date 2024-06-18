@@ -28,7 +28,6 @@ public class LeaseDto {
     private Integer userId;
     private Integer propertyOwnerId;
     private Integer brokerProfileId;
-  //  private Integer rentPerson;
 
     public LeaseDto(Lease lease) {
         this.leaseId = lease.getLeaseId();
@@ -41,5 +40,19 @@ public class LeaseDto {
         this.rent = lease.getRent();
         this.deposit = lease.getDeposit();
         this.propertyBookingcol = lease.getPropertyBookingcol();
+
+        // Set additional properties
+        if (lease.getPropertyProperty() != null) {
+            this.propertyId = lease.getPropertyProperty().getPropertyId();
+        }
+        if (lease.getUserUser() != null) {
+            this.userId = lease.getUserUser().getUserId();
+        }
+        if (lease.getProprtyWoner() != null) {
+            this.propertyOwnerId = lease.getProprtyWoner().getProprtyWonerId();
+        }
+        if (lease.getBrokerProfiles() != null) {
+            this.brokerProfileId = lease.getBrokerProfiles().getBrokerProfileId();
+        }
     }
 }
