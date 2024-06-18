@@ -94,7 +94,7 @@ public class LeaseServiceImpl implements LeaseService {
         if (optionalLease.isPresent()) {
             return new LeaseDto(optionalLease.get());
         } else {
-            throw new LeaseNotFoundException("Lease not found with ID: " + leaseId);
+            throw new RuntimeException("Lease not found with ID: " + leaseId);
         }
     }
 
@@ -104,7 +104,7 @@ public class LeaseServiceImpl implements LeaseService {
         if (optionalLease.isPresent()) {
             this.leaseRepository.deleteById(leaseId);
         } else {
-            throw new LeaseNotFoundException("Lease not found with ID: " + leaseId);
+            throw new RuntimeException("Lease not found with ID: " + leaseId);
         }
     }
 }
