@@ -37,7 +37,16 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 public class DomainConfig {
 
-    public static final String[] PUBLIC_URLS = { "/users/verify-otp" ,"/user/register","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**","/login", "/users/send-otp"/*, "/users/**"*/};
+    public static final String[] PUBLIC_URLS = {
+            "/users/verify-otp",
+            "/user/register",
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/swagger-resources/**",
+            "/login",
+            "/users/send-otp"
+    };
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
