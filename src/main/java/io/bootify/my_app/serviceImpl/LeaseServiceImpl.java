@@ -2,12 +2,14 @@ package io.bootify.my_app.serviceImpl;
 
 import io.bootify.my_app.domain.*;
 import io.bootify.my_app.dto.LeaseDto;
+import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.repos.*;
 import io.bootify.my_app.service.LeaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,10 +72,16 @@ public class LeaseServiceImpl implements LeaseService {
                 lease.setStartDate(leaseDto.getStartDate());
                 lease.setEndDate(leaseDto.getEndDate());
                 lease.setStatus(leaseDto.getStatus());
+                lease.setAmount(leaseDto.getAmount());
+                lease.setRent(leaseDto.getRent());
+                lease.setDeposit(leaseDto.getDeposit());
+                lease.setPropertyBookingcol(leaseDto.getPropertyBookingcol());
+                lease.setOwnerId(leaseDto.getOwnerId());
+
                 leaseRepository.save(lease);
                 return "success";
             } else {
-                throw new LeaseNotFoundException("Lease not found with ID: " + leaseDto.getLeaseId());
+                throw new LeaseNotFoundException("Lease not found with ID: " + leaseId);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -99,6 +107,45 @@ public class LeaseServiceImpl implements LeaseService {
     }
 
     @Override
+    public List<LeaseDto> getLeasesByPropertyOwnerId(Integer proprtyWonerId) {
+        List<Lease> leases = leaseRepository.findByProprtyWoner_ProprtyWonerId(proprtyWonerId);
+        if (leases.isEmpty()) {
+            throw new LeaseNotFoundException("No leases found for property owner ID: " + proprtyWonerId);
+        }
+        return leases.stream().map(LeaseDto::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<LeaseDto> getLeasesByBrokerProfileId(Integer brokerProfileId) {
+        List<Lease> leases = leaseRepository.findByBrokerProfiles_BrokerProfileId(brokerProfileId);
+        if (leases.isEmpty()) {
+            throw new LeaseNotFoundException("No leases found for broker profile ID: " + brokerProfileId);
+        }
+        return leases.stream().map(LeaseDto::new).collect(Collectors.toList());
+    }
+
+//    @Override
+//    public List<LeaseDto> getLeasesByUserId(Integer userId) {
+//        Optional<Lease> byId = leaseRepository.findById(userId);
+//        if (byId.isEmpty()) {
+//            throw new RuntimeException("No Lease found for user ID: " + userId);
+//        }
+//        return byId.stream()
+//                .map(LeaseDto::new)
+//                .collect(Collectors.toList());
+//    }
+
+    @Override
+    public List<LeaseDto> getLeasesByUserId(Integer userId) {
+        List<Lease> leases = leaseRepository.findByUserUser_UserId(userId);
+        if (leases.isEmpty()) {
+            throw new LeaseNotFoundException("No leases found for user ID: " + userId);
+        }
+        return leases.stream().map(LeaseDto::new).collect(Collectors.toList());
+    }
+
+
+    @Override
     public void deleteLeaseById(Integer leaseId) throws LeaseNotFoundException {
         Optional<Lease> optionalLease = leaseRepository.findById(leaseId);
         if (optionalLease.isPresent()) {
@@ -107,4 +154,6 @@ public class LeaseServiceImpl implements LeaseService {
             throw new RuntimeException("Lease not found with ID: " + leaseId);
         }
     }
+
+
 }

@@ -1,6 +1,7 @@
 package io.bootify.my_app.controller;
 
 import io.bootify.my_app.dto.LeaseDto;
+import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.service.LeaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,47 @@ public class LeaseController {
         List<LeaseDto> allLeases = this.leaseService.getAllLeases();
         return new ResponseEntity<>(allLeases, HttpStatus.OK);
     }
+
+
+
+
+    @GetMapping("/getByUserId")
+    public ResponseEntity<?> getLeasesByUserId(@RequestParam Integer userId) {
+        try {
+            List<LeaseDto> leases = leaseService.getLeasesByUserId(userId);
+            return new ResponseEntity<>(leases, HttpStatus.OK);
+        } catch (LeaseNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No leases found for User ID: " + userId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get leases by user ID: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/getByPropertyOwnerId")
+    public ResponseEntity<?> getLeasesByPropertyOwnerId(@RequestParam Integer proprtyWonerId) {
+        try {
+            List<LeaseDto> leases = leaseService.getLeasesByPropertyOwnerId(proprtyWonerId);
+            return new ResponseEntity<>(leases, HttpStatus.OK);
+        } catch (LeaseNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No leases found for Property Owner ID: " + proprtyWonerId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get leases by Property Owner ID: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/getByBrokerProfileId")
+    public ResponseEntity<?> getLeasesByBrokerProfileId(@RequestParam Integer brokerProfileId) {
+        try {
+            List<LeaseDto> leases = leaseService.getLeasesByBrokerProfileId(brokerProfileId);
+            return new ResponseEntity<>(leases, HttpStatus.OK);
+        } catch (LeaseNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No leases found for Broker Profile ID: " + brokerProfileId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get leases by Broker Profile ID: " + e.getMessage());
+        }
+    }
+
+
 
     @PutMapping("/update")
     public ResponseEntity<String> editLease(@RequestBody LeaseDto leaseDto, @RequestParam Integer leaseId) {

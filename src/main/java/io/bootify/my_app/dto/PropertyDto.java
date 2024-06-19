@@ -1,13 +1,14 @@
 package io.bootify.my_app.dto;
 
-
 import io.bootify.my_app.domain.Property;
+import io.bootify.my_app.domain.Lease;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -26,9 +27,7 @@ public class PropertyDto {
     private String flore;
     private Integer userId;
     private Integer propertyOwnerId;
-
-
-    private Set<LeaseDto> propertyLeases;
+    private Set<Integer> propertyLeases;
 
     public PropertyDto(Property property){
         this.propertyId = property.getPropertyId();
@@ -40,5 +39,17 @@ public class PropertyDto {
         this.city = property.getCity();
         this.comments = property.getComments();
         this.flore = property.getFlore();
+
+        if (property.getUserUser() != null) {
+            this.userId = property.getUserUser().getUserId();
+        }
+        if (property.getProprtyWoner() != null) {
+            this.propertyOwnerId = property.getProprtyWoner().getProprtyWonerId();
+        }
+        if (property.getPropertyLeases() != null) {
+            this.propertyLeases = property.getPropertyLeases().stream()
+                    .map(Lease::getLeaseId)
+                    .collect(Collectors.toSet());
+        }
     }
 }
