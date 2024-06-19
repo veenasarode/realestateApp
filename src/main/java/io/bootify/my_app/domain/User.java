@@ -76,6 +76,14 @@ public class User implements UserDetails {
 
     }
 
+
+    public User(String email, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Set<UserRole> roles, Integer userId) {
+        this.email = email;
+        this.password=password;
+        this.userId = userId;
+        this.userRoles=roles;
+
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> set = new HashSet<>();

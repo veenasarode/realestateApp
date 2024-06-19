@@ -1,6 +1,7 @@
 package io.bootify.my_app.controller;
 
 
+import io.bootify.my_app.domain.User;
 import io.bootify.my_app.exception.InvalidCredentialsException;
 import io.bootify.my_app.exception.UserDisabledException;
 import io.bootify.my_app.payloads.JwtAuthRequest;
@@ -45,7 +46,8 @@ public class LoginController {
             }
             // authentication done
             UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(jwtRequest.getUsername());
-            String token = this.jwtTokenHelper.generateToken(userDetails);
+            User user = (User) this.customUserDetailsService.loadUserByUsername(jwtRequest.getUsername());
+            String token = this.jwtTokenHelper.generateToken(userDetails,user);
             return ResponseEntity.ok(new JwtAuthResponse(token, "success"));
         } catch (Exception e) {
             return ResponseEntity.ok(new JwtAuthResponse("null", "Invalid credentials"));

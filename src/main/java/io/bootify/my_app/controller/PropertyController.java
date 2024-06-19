@@ -35,7 +35,7 @@ public class PropertyController {
     public ResponseEntity<?> getpropertyById(@RequestParam Integer propertyId) throws PropertyNotFoundException {
         try {
             PropertyDto propertyById = this.propertyService.getPropertyById(propertyId);
-            return new ResponseEntity<>(propertyId, HttpStatus.OK);
+            return new ResponseEntity<>(propertyById, HttpStatus.OK);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get property by id: " + e.getMessage());
         }

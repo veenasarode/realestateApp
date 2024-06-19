@@ -8,12 +8,14 @@ import io.bootify.my_app.exception.OtpExpiredException;
 import io.bootify.my_app.payloads.JwtAuthResponse;
 import io.bootify.my_app.repos.EmailVerificationRepository;
 import io.bootify.my_app.repos.UserRepo;
+import io.bootify.my_app.security.CustomUserDetailsService;
 import io.bootify.my_app.security.JwtTokenHelper;
 import io.bootify.my_app.service.EmailService;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +30,8 @@ public class ForgetPasswordController {
     @Autowired
     private JwtTokenHelper jwtTokenHelper;
 
-
+    @Autowired
+    private CustomUserDetailsService customUserDetailsService;
     @Autowired
     private UserRepo usersRepository;
 
@@ -47,8 +50,9 @@ public class ForgetPasswordController {
     public ResponseEntity<JwtAuthResponse> generateToken(@RequestParam String email) throws Exception {
 
         try {
-            User findByEmail = this.usersRepository.findByEmail(email);
-            String token = this.jwtTokenHelper.generateToken(findByEmail);
+            UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(email);
+            User user = this.usersRepository.findByEmail(email);
+            String token = this.jwtTokenHelper.generateToken(userDetails, user);
             return ResponseEntity.ok(new JwtAuthResponse(token, "success"));
         } catch (UsernameNotFoundException e) {
             e.printStackTrace();

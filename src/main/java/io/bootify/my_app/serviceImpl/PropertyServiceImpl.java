@@ -124,7 +124,8 @@ public class PropertyServiceImpl implements PropertyService {
     public PropertyDto getPropertyById(Integer propertyId) throws PropertyNotFoundException {
         Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
         if (optionalProperty.isPresent()) {
-            return new PropertyDto(optionalProperty.get());
+            PropertyDto propertyDto = new PropertyDto(optionalProperty.get());
+            return propertyDto;
         } else {
             throw new PropertyNotFoundException("Property not found with ID: " + propertyId);
         }

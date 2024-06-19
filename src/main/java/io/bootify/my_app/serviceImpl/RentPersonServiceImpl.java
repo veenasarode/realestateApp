@@ -8,6 +8,7 @@ import io.bootify.my_app.repos.RentPersonRepository;
 import io.bootify.my_app.repos.UserRepo;
 import io.bootify.my_app.service.RentPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,73 +22,87 @@ public class RentPersonServiceImpl implements RentPersonService {
     private RentPersonRepository rentPersonRepository;
 
     @Autowired
-    private UserRepo userRepository;  // Assuming you have UserRepository
+    private UserRepo userRepository;
     @Autowired
-    private LeaseRepository leaseRepository;  // Assuming you have LeaseRepository
+    private LeaseRepository leaseRepository;
+
 
     @Override
     public List<RentPersonDto> getAllRentPersons() {
-        return rentPersonRepository.findAll().stream()
-                .map(RentPersonDto::new)
-                .collect(Collectors.toList());
+        try {
+            return rentPersonRepository.findAll().stream()
+                    .map(RentPersonDto::new)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving rent persons: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public Optional<RentPersonDto> getRentPersonById(Integer id) {
-        return rentPersonRepository.findById(id)
-                .map(RentPersonDto::new);
+        try {
+            return rentPersonRepository.findById(id)
+                    .map(RentPersonDto::new);
+        } catch (Exception e) {
+            throw new RuntimeException("Error retrieving rent person by ID: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public RentPersonDto createRentPerson(RentPersonDto rentPersonDto) {
-        // Find the user by ID or throw an exception if not found
-        User user = userRepository.findById(rentPersonDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            User user = userRepository.findById(rentPersonDto.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Create a new RentPerson entity from the DTO
-        RentPerson rentPerson = new RentPerson(rentPersonDto);
+            RentPerson rentPerson = new RentPerson(rentPersonDto);
+            rentPerson.setUserUser(user);
 
-        // Set the user field on the RentPerson entity
-        rentPerson.setUserUser(user);
-
-        // Save the RentPerson entity to the repository
-        RentPerson savedRentPerson = rentPersonRepository.save(rentPerson);
-
-        // Convert the saved RentPerson entity back to a DTO
-        RentPersonDto rentPersonDto1 = new RentPersonDto(savedRentPerson);
-
-        // Return the DTO
-        return rentPersonDto1;
+            RentPerson savedRentPerson = rentPersonRepository.save(rentPerson);
+            return new RentPersonDto(savedRentPerson);
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Data integrity violation while creating rent person: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while creating rent person: " + e.getMessage(), e);
+        }
     }
 
     @Override
     public RentPersonDto updateRentPerson(Integer id, RentPersonDto rentPersonDTO) {
-        Optional<RentPerson> optionalRentPerson = rentPersonRepository.findById(id);
-        if (optionalRentPerson.isPresent()) {
-            User user = userRepository.findById(rentPersonDTO.getUserId())
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-          //  Set<Lease> leases = leaseRepository.findAllById(rentPersonDTO.getLeaseIds()).stream().collect(Collectors.toSet());
+        try {
+            Optional<RentPerson> optionalRentPerson = rentPersonRepository.findById(id);
+            if (optionalRentPerson.isPresent()) {
+                User user = userRepository.findById(rentPersonDTO.getUserId())
+                        .orElseThrow(() -> new RuntimeException("User not found"));
 
-            RentPerson rentPerson = optionalRentPerson.get();
-            rentPerson.setName(rentPersonDTO.getName());
-            rentPerson.setAddress(rentPersonDTO.getAddress());
-            rentPerson.setMoNumber(rentPersonDTO.getMoNumber());
-            rentPerson.setRentPersoncol(rentPersonDTO.getRentPersoncol());
-            rentPerson.setUserUser(user);
-          //  rentPerson.setRentPersonLease(leases);
+                RentPerson rentPerson = optionalRentPerson.get();
+                rentPerson.setName(rentPersonDTO.getName());
+                rentPerson.setAddress(rentPersonDTO.getAddress());
+                rentPerson.setMoNumber(rentPersonDTO.getMoNumber());
+                rentPerson.setRentPersoncol(rentPersonDTO.getRentPersoncol());
+                rentPerson.setUserUser(user);
 
-            RentPerson updatedRentPerson = rentPersonRepository.save(rentPerson);
-           RentPersonDto rentPersonDto=new RentPersonDto(updatedRentPerson);
-           return rentPersonDto;
-        } else {
-            return null; // Or throw an exception
+                RentPerson updatedRentPerson = rentPersonRepository.save(rentPerson);
+                return new RentPersonDto(updatedRentPerson);
+            } else {
+                throw new RuntimeException("Rent person not found with ID: " + id);
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Data integrity violation while updating rent person: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while updating rent person: " + e.getMessage(), e);
         }
     }
 
     @Override
     public void deleteRentPerson(Integer id) {
-        if (rentPersonRepository.existsById(id)) {
-            rentPersonRepository.deleteById(id);
+        try {
+            if (rentPersonRepository.existsById(id)) {
+                rentPersonRepository.deleteById(id);
+            } else {
+                throw new RuntimeException("Rent person not found with ID: " + id);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("An unexpected error occurred while deleting rent person: " + e.getMessage(), e);
         }
     }
 }

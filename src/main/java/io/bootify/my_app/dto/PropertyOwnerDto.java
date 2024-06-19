@@ -2,12 +2,14 @@ package io.bootify.my_app.dto;
 
 import io.bootify.my_app.domain.PropertyOwner;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class PropertyOwnerDto {
     private Integer propertyOwnerId;
     private String moNumber;
