@@ -16,6 +16,12 @@ public interface PropertyService {
 
    List<PropertyDto> getAllProperties();
 
+   List<PropertyDto> getPropertiesByUserId(Integer userId);
+
+   List<PropertyDto> getPropertiesByPropertyOwnerId(Integer propertyOwnerId);
+
+
+
    PropertyDto getPropertyById(Integer propertyId) throws PropertyNotFoundException;
 
    void deletePropertyById(Integer propertyId) throws PropertyNotFoundException;

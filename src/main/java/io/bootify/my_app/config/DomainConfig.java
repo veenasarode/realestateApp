@@ -45,6 +45,8 @@ public class DomainConfig {
             "/swagger-ui.html",
             "/swagger-resources/**",
             "/login",
+            "/lease/**",
+            "/property/**",
             "/users/send-otp"
     };
     @Autowired

@@ -57,6 +57,32 @@ public class PropertyController {
         }
     }
 
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<PropertyDto>> getPropertiesByUserId(@PathVariable Integer userId) {
+        try {
+            List<PropertyDto> properties = propertyService.getPropertiesByUserId(userId);
+            return new ResponseEntity<>(properties, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/owner/{propertyOwnerId}")
+    public ResponseEntity<List<PropertyDto>> getPropertiesByPropertyOwnerId(@PathVariable Integer propertyOwnerId) {
+        try {
+            List<PropertyDto> properties = propertyService.getPropertiesByPropertyOwnerId(propertyOwnerId);
+            return new ResponseEntity<>(properties, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     @DeleteMapping("/deleteById")
     public ResponseEntity<?> deletePropertyById(@RequestParam Integer propertyId) throws PropertyNotFoundException {
         try {

@@ -1,11 +1,13 @@
 package io.bootify.my_app.serviceImpl;
 
 
+import io.bootify.my_app.domain.Lease;
 import io.bootify.my_app.domain.Property;
 import io.bootify.my_app.domain.PropertyOwner;
 import io.bootify.my_app.domain.User;
 import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.exception.PropertyNotFoundException;
+import io.bootify.my_app.repos.LeaseRepository;
 import io.bootify.my_app.repos.PropertyRepository;
 import io.bootify.my_app.repos.ProprtyWonerRepository;
 import io.bootify.my_app.repos.UserRepo;
@@ -13,8 +15,10 @@ import io.bootify.my_app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +29,10 @@ public class PropertyServiceImpl implements PropertyService {
     private ProprtyWonerRepository proprtyWonerRepository;
     @Autowired
     private UserRepo userRepo;
+    @Autowired
+    private LeaseRepository leaseRepository;
+
+
     @Override
     public String addProperty(PropertyDto propertyDto) {
         try {
@@ -32,12 +40,21 @@ public class PropertyServiceImpl implements PropertyService {
                     .orElseThrow(() -> new RuntimeException("User not found"));
             PropertyOwner propertyOwner = proprtyWonerRepository.findById(propertyDto.getPropertyOwnerId())
                     .orElseThrow(() -> new RuntimeException("Property owner not found"));
-            Property property=new Property(propertyDto);
-           /* this.userRepo.save(user);
-            this.propertyRepository.save(property);
-            this.proprtyWonerRepository.save(propertyOwner);*/
+
+            Set<Lease> leases = new HashSet<>();
+            if (propertyDto.getPropertyLeases() != null && !propertyDto.getPropertyLeases().isEmpty()) {
+                for (Integer leaseId : propertyDto.getPropertyLeases()) {
+                    Lease lease = leaseRepository.findById(leaseId)
+                            .orElseThrow(() -> new RuntimeException("Lease with ID " + leaseId + " not found"));
+                    leases.add(lease);
+                }
+            }
+
+            Property property = new Property(propertyDto);
             property.setUserUser(user);
             property.setProprtyWoner(propertyOwner);
+            property.setPropertyLeases(leases);
+
             propertyRepository.save(property);
             return "success";
         } catch (Exception e) {
@@ -55,6 +72,11 @@ public class PropertyServiceImpl implements PropertyService {
                 property.setName(propertyDto.getName());
                 property.setType(propertyDto.getType());
                 property.setAddress(propertyDto.getAddress());
+                property.setStatus(propertyDto.getStatus());
+                property.setCity(propertyDto.getCity());
+                property.setComments(propertyDto.getComments());
+                property.setFlore(propertyDto.getFlore());
+
                 propertyRepository.save(property);
 
                 return "success";
@@ -71,6 +93,28 @@ public class PropertyServiceImpl implements PropertyService {
     @Override
     public List<PropertyDto> getAllProperties() {
         List<Property> properties = propertyRepository.findAll();
+        return properties.stream()
+                .map(PropertyDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PropertyDto> getPropertiesByUserId(Integer userId) {
+        List<Property> properties = propertyRepository.findByUserUserUserId(userId);
+        if (properties.isEmpty()) {
+            throw new RuntimeException("No properties found for user ID: " + userId);
+        }
+        return properties.stream()
+                .map(PropertyDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PropertyDto> getPropertiesByPropertyOwnerId(Integer propertyOwnerId) {
+        List<Property> properties = propertyRepository.findByProprtyWonerProprtyWonerId(propertyOwnerId);
+        if (properties.isEmpty()) {
+            throw new RuntimeException("No properties found for property owner ID: " + propertyOwnerId);
+        }
         return properties.stream()
                 .map(PropertyDto::new)
                 .collect(Collectors.toList());

@@ -8,7 +8,6 @@ import lombok.Setter;
 
 import java.util.Set;
 
-
 @Entity
 @Getter
 @Setter
@@ -53,11 +52,10 @@ public class Property {
     private PropertyOwner proprtyWoner;
 
     @OneToMany(mappedBy = "propertyProperty")
-    private Set<Lease> propertyLease;
+    private Set<Lease> propertyLeases;
 
     @OneToMany(mappedBy = "propertyAgreement")
     private Set<Agreement> agreements;
-
 
     public Property(PropertyDto propertyDto){
         this.propertyId = propertyDto.getPropertyId();
