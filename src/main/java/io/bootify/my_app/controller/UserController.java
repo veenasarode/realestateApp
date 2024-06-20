@@ -2,11 +2,9 @@ package io.bootify.my_app.controller;
 
 
 import io.bootify.my_app.domain.EmailVerification;
+import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.dto.UserDto;
-import io.bootify.my_app.exception.InvalidOtpException;
-import io.bootify.my_app.exception.OtpExpiredException;
-import io.bootify.my_app.exception.ResourceNotFoundException;
-import io.bootify.my_app.exception.UserAlreadyExistException;
+import io.bootify.my_app.exception.*;
 import io.bootify.my_app.repos.EmailVerificationRepository;
 import io.bootify.my_app.service.EmailService;
 import io.bootify.my_app.service.UserService;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @RestController
@@ -146,5 +145,17 @@ public class UserController {
         ResponseEntity<Void> responseEntity = new ResponseEntity<>(null , HttpStatus.NO_CONTENT);
 
         return responseEntity;
+    }
+
+    @GetMapping("/getByBrokerProfileId")
+    public ResponseEntity<?> getUsersByBrokerProfileId(@RequestParam Integer brokerProfileId) {
+        try {
+            List<UserDto> leases = userService.getUserByBrokerProfileId(brokerProfileId);
+            return new ResponseEntity<>(leases, HttpStatus.OK);
+        } catch (LeaseNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No leases found for Broker Profile ID: " + brokerProfileId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get leases by Broker Profile ID: " + e.getMessage());
+        }
     }
 }

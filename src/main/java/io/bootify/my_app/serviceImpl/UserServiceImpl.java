@@ -1,12 +1,16 @@
 package io.bootify.my_app.serviceImpl;
 
 
+import io.bootify.my_app.domain.Lease;
 import io.bootify.my_app.domain.Roles;
 import io.bootify.my_app.domain.User;
 import io.bootify.my_app.domain.UserRole;
+import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.dto.UserDto;
+import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.exception.UserAlreadyExistException;
+import io.bootify.my_app.exception.UserNotFoundException;
 import io.bootify.my_app.repos.RolesRepo;
 import io.bootify.my_app.repos.UserRepo;
 import io.bootify.my_app.service.UserService;
@@ -14,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -105,5 +111,14 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()-> new ResourceNotFoundException("User","Id",userId));
 
         userRepo.delete(user);
+    }
+
+    @Override
+    public List<UserDto> getUserByBrokerProfileId(Integer brokerProfileId) {
+        List<User> users = userRepo.findByBrokerProfiles_BrokerProfileId(brokerProfileId);
+        if (users.isEmpty()) {
+            throw new UserNotFoundException("No Users found for broker profile ID: " + brokerProfileId);
+        }
+        return users.stream().map(UserDto::new).collect(Collectors.toList());
     }
 }
