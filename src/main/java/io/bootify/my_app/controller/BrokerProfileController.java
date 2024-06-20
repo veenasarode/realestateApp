@@ -2,7 +2,9 @@ package io.bootify.my_app.controller;
 
 
 import io.bootify.my_app.dto.BrokerProfileDto;
+import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.exception.BrokerProfileNotFoundException;
+import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.service.BrokerProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,6 +63,18 @@ public class BrokerProfileController {
             return ResponseEntity.ok("Broker profile deleted successfully.");
         } catch (BrokerProfileNotFoundException e) {
             throw new BrokerProfileNotFoundException("Broker profile not found with ID: " + brokerProfileId);
+        }
+    }
+
+    @GetMapping("/getByUserId")
+    public ResponseEntity<?> getBrokerProfileByUserId(@RequestParam Integer userId) {
+        try {
+            List<BrokerProfileDto> brokers = brokerProfileService.getBrokerByUserId(userId);
+            return new ResponseEntity<>(brokers, HttpStatus.OK);
+        } catch (BrokerProfileNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Broker found for User ID: " + userId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get Broker by user ID: " + e.getMessage());
         }
     }
 }

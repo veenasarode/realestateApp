@@ -8,6 +8,8 @@ import io.bootify.my_app.repos.*;
 import io.bootify.my_app.service.LeaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -89,11 +91,9 @@ public class LeaseServiceImpl implements LeaseService {
     }
 
     @Override
-    public List<LeaseDto> getAllLeases() {
-        List<Lease> leases = leaseRepository.findAll();
-        return leases.stream()
-                .map(LeaseDto::new)
-                .collect(Collectors.toList());
+    public Page<LeaseDto> getAllLeases(Pageable pageable) {
+        Page<Lease> leases = leaseRepository.findAll(pageable);
+        return leases.map(LeaseDto::new);
     }
 
     @Override

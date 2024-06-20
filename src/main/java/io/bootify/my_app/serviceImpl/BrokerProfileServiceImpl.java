@@ -2,8 +2,11 @@ package io.bootify.my_app.serviceImpl;
 
 
 import io.bootify.my_app.domain.BrokerProfile;
+import io.bootify.my_app.domain.Lease;
 import io.bootify.my_app.dto.BrokerProfileDto;
+import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.exception.BrokerProfileNotFoundException;
+import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.repos.BrokerProfileRepository;
 import io.bootify.my_app.service.BrokerProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,4 +75,15 @@ public class BrokerProfileServiceImpl implements BrokerProfileService {
             throw new BrokerProfileNotFoundException("Broker profile not found with ID: " + brokerProfileId);
         }
     }
+
+    @Override
+    public List<BrokerProfileDto> getBrokerByUserId(Integer userId) throws BrokerProfileNotFoundException {
+        List<BrokerProfile> brokers = brokerProfileRepository.findByUserUser_UserId(userId);
+        if (brokers.isEmpty()) {
+            throw new BrokerProfileNotFoundException("No Broker found for user ID: " + userId);
+        }
+        return brokers.stream().map(BrokerProfileDto::new).collect(Collectors.toList());
+    }
+
+
 }
