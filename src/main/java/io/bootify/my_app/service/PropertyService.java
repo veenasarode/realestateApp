@@ -5,6 +5,8 @@ package io.bootify.my_app.service;
 
 import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.exception.PropertyNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -14,7 +16,8 @@ public interface PropertyService {
 
    String updateProperty(PropertyDto propertyDto, Integer propertyId);
 
-   List<PropertyDto> getAllProperties();
+   Page<PropertyDto> getAllProperties(Pageable pageable);
+
 
    List<PropertyDto> getPropertiesByUserId(Integer userId);
 

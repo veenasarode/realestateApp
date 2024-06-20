@@ -5,9 +5,12 @@ import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.service.LeaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -39,10 +42,23 @@ public class LeaseController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<LeaseDto>> showAllLeases() {
-        List<LeaseDto> allLeases = this.leaseService.getAllLeases();
-        return new ResponseEntity<>(allLeases, HttpStatus.OK);
+    public ResponseEntity<?> showAllLeases(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<LeaseDto> allLeases = leaseService.getAllLeases(pageable);
+
+            if (page >= allLeases.getTotalPages()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Page not found");
+            }
+
+            return new ResponseEntity<>(allLeases, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
 
 
 
