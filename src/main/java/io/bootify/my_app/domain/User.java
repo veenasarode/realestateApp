@@ -33,6 +33,9 @@ public class User implements UserDetails {
     private String name;
 
     @Column(length = 45)
+    private String status;
+
+    @Column(length = 45)
     private String address;
 
     @Column(length = 45)

@@ -3,10 +3,7 @@ package io.bootify.my_app.controller;
 
 import io.bootify.my_app.domain.EmailVerification;
 import io.bootify.my_app.dto.UserDto;
-import io.bootify.my_app.exception.InvalidOtpException;
-import io.bootify.my_app.exception.OtpExpiredException;
-import io.bootify.my_app.exception.ResourceNotFoundException;
-import io.bootify.my_app.exception.UserAlreadyExistException;
+import io.bootify.my_app.exception.*;
 import io.bootify.my_app.repos.EmailVerificationRepository;
 import io.bootify.my_app.service.EmailService;
 import io.bootify.my_app.service.UserService;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @RestController
@@ -146,5 +144,15 @@ public class UserController {
         ResponseEntity<Void> responseEntity = new ResponseEntity<>(null , HttpStatus.NO_CONTENT);
 
         return responseEntity;
+    }
+
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<List<UserDto>> getAllUsers(@RequestParam int pageNo,@RequestParam int pageSize){
+        try {
+            List<UserDto> allUsers = this.userService.getAllUsers(pageNo,pageSize);
+            return new ResponseEntity<List<UserDto>>(allUsers,HttpStatus.OK);
+        } catch (Exception | UserNotFound | PageNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

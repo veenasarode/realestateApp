@@ -5,17 +5,17 @@ import io.bootify.my_app.domain.Roles;
 import io.bootify.my_app.domain.User;
 import io.bootify.my_app.domain.UserRole;
 import io.bootify.my_app.dto.UserDto;
+import io.bootify.my_app.exception.PageNotFoundException;
 import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.exception.UserAlreadyExistException;
+import io.bootify.my_app.exception.UserNotFound;
 import io.bootify.my_app.repos.RolesRepo;
 import io.bootify.my_app.repos.UserRepo;
 import io.bootify.my_app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -105,5 +105,33 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(()-> new ResourceNotFoundException("User","Id",userId));
 
         userRepo.delete(user);
+    }
+
+    @Override
+    public List<UserDto> getAllUsers(int pageNo, int pageSize) throws UserNotFound, PageNotFoundException {
+        List<User> listOfCar = userRepo.getActivateUserOrderedByCreatedAtDesc();
+        if (listOfCar.isEmpty()) {
+            throw new UserNotFound("User not found");
+        }
+
+        int totalCars = listOfCar.size();
+        int totalPages = (int) Math.ceil((double) totalCars / pageSize);
+
+        if (pageNo < 0 || pageNo >= totalPages) {
+            throw new PageNotFoundException("Page not found");
+        }
+
+        int pageStart = (pageNo) * pageSize;
+        int pageEnd = Math.min(pageStart + pageSize, totalCars);
+
+        List<UserDto> listOfUserDto = new ArrayList<>();
+        for (int i = pageStart; i < pageEnd; i++) {
+            User user = listOfCar.get(i);
+            UserDto userDto = new UserDto(user);
+            userDto.setUserId(user.getUserId());
+            listOfUserDto.add(userDto);
+        }
+
+        return listOfUserDto;
     }
 }
