@@ -5,9 +5,12 @@ import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.exception.PropertyNotFoundException;
 import io.bootify.my_app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -42,9 +45,21 @@ public class PropertyController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<PropertyDto>> showAllProperty() {
-        List<PropertyDto> allProperties = this.propertyService.getAllProperties();
-        return new ResponseEntity<>(allProperties, HttpStatus.OK);
+    public ResponseEntity<?> showAllProperty(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<PropertyDto> allProperties = propertyService.getAllProperties(pageable);
+
+            if (page >= allProperties.getTotalPages()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Page not found");
+            }
+
+            return new ResponseEntity<>(allProperties, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     @PutMapping("/update")
