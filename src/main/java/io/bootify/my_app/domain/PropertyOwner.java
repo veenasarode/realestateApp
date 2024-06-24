@@ -26,6 +26,9 @@ public class PropertyOwner {
     @Column(length = 45)
     private String address;
 
+    @Column(length = 45)
+    private String status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_user_id", nullable = false)
     private User userUser;
@@ -41,5 +44,6 @@ public class PropertyOwner {
         this.proprtyWonerId = dto.getPropertyOwnerId();
         this.moNumber = dto.getMoNumber();
         this.address = dto.getAddress();
+        this.status=dto.getStatus();
     }
 }

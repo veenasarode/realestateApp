@@ -16,28 +16,26 @@ public class UserDto {
 
     private Integer userId;
 
-
     private String name;
 
     private String email;
 
-
     private String address;
 
+    private String status;
 
     private String moNumber;
 
-
     private String password;
 
-    public UserDto(User user){
+    public UserDto(User user) {
         this.userId = user.getUserId();
         this.name = user.getName();
         this.email = user.getEmail();
         this.address = user.getAddress();
         this.moNumber = user.getMoNumber();
         this.password = user.getPassword();
-
+        this.status = user.getStatus();
     }
 
 

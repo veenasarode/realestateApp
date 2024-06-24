@@ -3,6 +3,11 @@ package io.bootify.my_app.controller;
 
 import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.dto.RentPersonDto;
+import io.bootify.my_app.dto.ResponseRentPersonDto;
+import io.bootify.my_app.exception.PageNotFoundException;
+import io.bootify.my_app.exception.ResourceNotFoundException;
+import io.bootify.my_app.exception.UserNotFound;
+import io.bootify.my_app.repos.RentPersonRepository;
 import io.bootify.my_app.service.RentPersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +24,8 @@ public class RentPersonController {
     @Autowired
     private RentPersonService rentPersonService;
 
+    @Autowired
+    private RentPersonRepository rentPersonRepository;
     @GetMapping("/{id}")
     public ResponseEntity<?> getRentPersonById(@PathVariable Integer id) {
         try {
@@ -68,15 +75,28 @@ public class RentPersonController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<?> getAllRentPersons() {
+    @GetMapping("/getAllRentPersons")
+    public ResponseEntity<ResponseRentPersonDto> getAllRentPersons(@RequestParam int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
         try {
-            List<RentPersonDto> rentPersonList = rentPersonService.getAllRentPersons();
-            return ResponseEntity.ok(rentPersonList); // Return 200 OK with rent person list
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to get rent persons: " + e.getMessage()); // Return 500 Internal Server Error with error message
+            List<RentPersonDto> listOfRentPersons = this.rentPersonService.getAllRentPersons(pageNo, pageSize);
+            int totalPages = getTotalPagesForRentPersons(pageSize);
+            ResponseRentPersonDto responseRentPersonDto = new ResponseRentPersonDto("success", listOfRentPersons, totalPages);
+            return ResponseEntity.status(HttpStatus.OK).body(responseRentPersonDto);
+        } catch (ResourceNotFoundException | UserNotFound rentPersonNotFoundException) {
+            ResponseRentPersonDto responseRentPersonDto = new ResponseRentPersonDto("unsuccess");
+            responseRentPersonDto.setException("Rent person not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseRentPersonDto);
+        } catch (PageNotFoundException pageNotFoundException) {
+            ResponseRentPersonDto responseRentPersonDto = new ResponseRentPersonDto("unsuccess");
+            responseRentPersonDto.setException("Page not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseRentPersonDto);
         }
     }
+
+    private int getTotalPagesForRentPersons(int pageSize) {
+        int totalRentPersons = rentPersonRepository.findAll().size();
+        return (int) Math.ceil((double) totalRentPersons / pageSize);
+    }
+
 
 }

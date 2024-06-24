@@ -147,15 +147,15 @@ public class UserController {
         return responseEntity;
     }
 
-//    @GetMapping("/getByBrokerProfileId")
-//    public ResponseEntity<?> getUsersByBrokerProfileId(@RequestParam Integer brokerProfileId) {
-//        try {
-//            List<UserDto> leases = userService.getUserByBrokerProfileId(brokerProfileId);
-//            return new ResponseEntity<>(leases, HttpStatus.OK);
-//        } catch (LeaseNotFoundException e) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No leases found for Broker Profile ID: " + brokerProfileId);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get leases by Broker Profile ID: " + e.getMessage());
-//        }
-//    }
+    @GetMapping("/getByBrokerProfileId")
+    public ResponseEntity<?> getUsersByBrokerProfileId(@RequestParam Integer brokerProfileId) {
+        try {
+            List<UserDto> leases = userService.getUserByBrokerProfileId(brokerProfileId);
+            return new ResponseEntity<>(leases, HttpStatus.OK);
+        } catch (LeaseNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No leases found for Broker Profile ID: " + brokerProfileId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get leases by Broker Profile ID: " + e.getMessage());
+        }
+    }
 }

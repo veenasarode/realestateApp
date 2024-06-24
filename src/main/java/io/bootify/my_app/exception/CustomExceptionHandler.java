@@ -79,4 +79,11 @@ public class CustomExceptionHandler {
         ApiResponse apiResponse =new ApiResponse(message,false);
         return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(PageNotFoundException.class)
+    public ResponseEntity<ApiResponse> pageNotFoundException(PageNotFoundException ex){
+
+        String message=ex.getMessage();
+        ApiResponse apiResponse =new ApiResponse(message,false);
+        return new ResponseEntity<ApiResponse>(apiResponse,HttpStatus.NOT_FOUND);
+    }
 }

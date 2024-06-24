@@ -3,6 +3,8 @@ package io.bootify.my_app.serviceImpl;
 import io.bootify.my_app.domain.PropertyOwner;
 import io.bootify.my_app.domain.User;
 import io.bootify.my_app.dto.PropertyOwnerDto;
+import io.bootify.my_app.exception.PageNotFoundException;
+import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.repos.ProprtyWonerRepository;
 import io.bootify.my_app.repos.UserRepo;
 import io.bootify.my_app.service.PropertyOwnerService;
@@ -10,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 @Service
@@ -19,13 +22,34 @@ public class PropertyOwnerServiceImpl implements PropertyOwnerService {
     private UserRepo userRepo;
     @Autowired
     private ProprtyWonerRepository propertyOwnerRepository;
+
     @Override
-    public List<PropertyOwner> getAllPropertyOwners() {
-        try {
-            return propertyOwnerRepository.findAll();
-        } catch (Exception e) {
-            throw new RuntimeException("Error retrieving property owners: " + e.getMessage(), e);
+    public List<PropertyOwnerDto> getAllPropertyOwners(int pageNo, int pageSize) throws PageNotFoundException, ResourceNotFoundException {
+        List<PropertyOwner> propertyOwners = propertyOwnerRepository.getActivatePropertyOwnerOrderedByCreatedAtDesc();
+
+        if (propertyOwners.isEmpty()) {
+            throw new ResourceNotFoundException("Property owner not found");
         }
+
+        int totalPropertyOwners = propertyOwners.size();
+        int totalPages = (int) Math.ceil((double) totalPropertyOwners / pageSize);
+
+        if (pageNo < 0 || pageNo >= totalPages) {
+            throw new PageNotFoundException("Page not found");
+        }
+
+        int pageStart = pageNo * pageSize;
+        int pageEnd = Math.min(pageStart + pageSize, totalPropertyOwners);
+
+        List<PropertyOwnerDto> listOfPropertyOwnerDto = new ArrayList<>();
+        for (int i = pageStart; i < pageEnd; i++) {
+            PropertyOwner propertyOwner = propertyOwners.get(i);
+            PropertyOwnerDto propertyOwnerDto = new PropertyOwnerDto(propertyOwner);
+            propertyOwnerDto.setPropertyOwnerId(propertyOwner.getProprtyWonerId());
+            listOfPropertyOwnerDto.add(propertyOwnerDto);
+        }
+
+        return listOfPropertyOwnerDto;
     }
 
     @Override

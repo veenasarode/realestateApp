@@ -2,10 +2,16 @@ package io.bootify.my_app.controller;
 
 import io.bootify.my_app.domain.PropertyOwner;
 import io.bootify.my_app.dto.PropertyOwnerDto;
+import io.bootify.my_app.dto.ResponseOwnerDto;
+import io.bootify.my_app.exception.PageNotFoundException;
+import io.bootify.my_app.exception.ResourceNotFoundException;
+import io.bootify.my_app.exception.UserNotFound;
+import io.bootify.my_app.repos.ProprtyWonerRepository;
 import io.bootify.my_app.service.PropertyOwnerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +26,8 @@ public class PropertyOwnerController {
     private PropertyOwnerService propertyOwnerService;
 
 
-
+@Autowired
+private ProprtyWonerRepository proprtyWonerRepository;
 
     @PostMapping("/")
     public ResponseEntity<?> createPropertyOwner(@RequestBody PropertyOwnerDto propertyOwnerDto) {
@@ -54,15 +61,25 @@ public class PropertyOwnerController {
                     .body("Failed to delete property owner: " + e.getMessage());
         }
     }
-    @GetMapping
-    public ResponseEntity<?> getAllPropertyOwners() {
+    @GetMapping("/getAllPropertyOwners")
+    public ResponseEntity<ResponseOwnerDto> getAllPropertyOwners(@RequestParam int pageNo, @RequestParam(defaultValue = "10") int pageSize) throws ResourceNotFoundException {
         try {
-            List<PropertyOwner> propertyOwnerList = propertyOwnerService.getAllPropertyOwners();
-            return ResponseEntity.ok(propertyOwnerList);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to get property owners: " + e.getMessage());
+            List<PropertyOwnerDto> listOfPropertyOwners = this.propertyOwnerService.getAllPropertyOwners(pageNo, pageSize);
+            int totalPages = getTotalPagesForPropertyOwners(pageSize);
+            ResponseOwnerDto responsePropertyOwnerDto = new ResponseOwnerDto("success", listOfPropertyOwners, totalPages);
+            return ResponseEntity.status(HttpStatus.OK).body(responsePropertyOwnerDto);
+        } catch (PageNotFoundException pageNotFoundException) {
+            ResponseOwnerDto responsePropertyOwnerDto = new ResponseOwnerDto("unsuccess");
+            responsePropertyOwnerDto.setException("Page not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responsePropertyOwnerDto);
+
+        } catch (UserNotFound e) {
+            throw new ResourceNotFoundException(e.getMessage());
         }
+    }
+    private int getTotalPagesForPropertyOwners(int pageSize) {
+        int totalUsers = proprtyWonerRepository.findAll().size();
+        return (int) Math.ceil((double) totalUsers / pageSize);
     }
 
     @GetMapping("/{id}")

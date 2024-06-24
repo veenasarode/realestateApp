@@ -7,3 +7,4 @@ public class PageNotFoundException extends RuntimeException {
         super(message);
     }
 }
+

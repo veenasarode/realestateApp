@@ -33,6 +33,9 @@ public class User implements UserDetails {
     private String name;
 
     @Column(length = 45)
+    private String status;
+
+    @Column(length = 45)
     private String address;
 
     @Column(length = 45)
@@ -65,24 +68,25 @@ public class User implements UserDetails {
     @JsonIgnore
     private Set<UserRole> userRoles = new HashSet<>();
 
-    public User(UserDto userDto){
+    public User(UserDto userDto) {
         this.userId = userDto.getUserId();
         this.name = userDto.getName();
         this.email = userDto.getEmail();
         this.address = userDto.getAddress();
         this.moNumber = userDto.getMoNumber();
         this.password = userDto.getPassword();
-
+        this.status = userDto.getStatus();
     }
 
 
     public User(String email, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Set<UserRole> roles, Integer userId) {
         this.email = email;
-        this.password=password;
+        this.password = password;
         this.userId = userId;
-        this.userRoles=roles;
+        this.userRoles = roles;
 
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<SimpleGrantedAuthority> set = new HashSet<>();

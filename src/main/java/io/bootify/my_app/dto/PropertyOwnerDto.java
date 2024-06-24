@@ -14,6 +14,7 @@ public class PropertyOwnerDto {
     private Integer propertyOwnerId;
     private String moNumber;
     private String address;
+    private String status;
     private Integer userId;
     private Set<Integer> propertyIds;
     private Set<Integer> leaseIds;
@@ -23,5 +24,6 @@ public class PropertyOwnerDto {
         this.propertyOwnerId = propertyOwner.getProprtyWonerId();
         this.moNumber = propertyOwner.getMoNumber();
         this.address = propertyOwner.getAddress();
+        this.status=propertyOwner.getStatus();
     }
 }

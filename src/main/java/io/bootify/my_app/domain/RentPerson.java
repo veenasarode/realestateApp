@@ -16,7 +16,7 @@ public class RentPerson {
     @Id
     @Column(nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer rentPerson;
+    private Integer rentPersonId;
 
     @Column(length = 45)
     private String name;
@@ -30,6 +30,9 @@ public class RentPerson {
     @Column(length = 45)
     private String rentPersoncol;
 
+    @Column(length = 45)
+    private String status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_user_id", nullable = false)
     private User userUser;
@@ -38,10 +41,11 @@ public class RentPerson {
     private Set<Lease> rentPersonLease;*/
 
     public RentPerson(RentPersonDto rentPersonDto) {
-        this.rentPerson = rentPersonDto.getRentPersonId();
+        this.rentPersonId = rentPersonDto.getRentPersonId();
         this.name = rentPersonDto.getName();
         this.address = rentPersonDto.getAddress();
         this.moNumber = rentPersonDto.getMoNumber();
         this.rentPersoncol = rentPersonDto.getRentPersoncol();
+        this.status=rentPersonDto.getStatus();
     }
 }
