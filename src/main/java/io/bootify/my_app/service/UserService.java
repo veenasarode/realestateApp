@@ -17,5 +17,5 @@ public interface UserService {
 
    public void deleteUser(Integer userId) throws ResourceNotFoundException;
 
-    public List<UserDto> getUserByBrokerProfileId(Integer brokerProfileId);
+    //public List<UserDto> getUserByBrokerProfileId(Integer brokerProfileId);
 }

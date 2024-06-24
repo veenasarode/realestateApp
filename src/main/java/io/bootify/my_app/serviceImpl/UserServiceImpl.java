@@ -88,7 +88,7 @@ public class UserServiceImpl implements UserService {
 
         if(optionalUser.isPresent())
         {
-            User user = optionalUser.get();//data from database
+            User user = optionalUser.get();
 
             user.setName(userDto.getName());
             user.setAddress(userDto.getAddress());
@@ -113,12 +113,12 @@ public class UserServiceImpl implements UserService {
         userRepo.delete(user);
     }
 
-    @Override
-    public List<UserDto> getUserByBrokerProfileId(Integer brokerProfileId) {
-        List<User> users = userRepo.findByBrokerProfiles_BrokerProfileId(brokerProfileId);
-        if (users.isEmpty()) {
-            throw new UserNotFoundException("No Users found for broker profile ID: " + brokerProfileId);
-        }
-        return users.stream().map(UserDto::new).collect(Collectors.toList());
-    }
+//    @Override
+//    public List<UserDto> getUserByBrokerProfileId(Integer brokerProfileId) {
+//        List<User> users = userRepo.findByBrokerProfiles_BrokerProfileId(brokerProfileId);
+//        if (users.isEmpty()) {
+//            throw new UserNotFoundException("No Users found for broker profile ID: " + brokerProfileId);
+//        }
+//        return users.stream().map(UserDto::new).collect(Collectors.toList());
+//    }
 }

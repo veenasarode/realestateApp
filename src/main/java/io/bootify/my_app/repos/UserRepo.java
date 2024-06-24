@@ -12,5 +12,5 @@ import java.util.List;
 public interface UserRepo extends JpaRepository<User,Integer> {
     User findByEmail(String email);
 
-    List<User> findByBrokerProfiles_BrokerProfileId(Integer brokerProfileId);
+   // List<User> findByBrokerProfiles_BrokerProfileId(Integer brokerProfileId);
 }

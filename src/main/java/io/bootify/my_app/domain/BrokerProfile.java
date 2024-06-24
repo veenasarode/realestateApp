@@ -25,7 +25,8 @@ public class BrokerProfile {
     private String fullAddress;
     private String city;
 
-    @OneToOne(mappedBy = "brokerProfile")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
     @OneToMany(mappedBy = "brokerProfiles")
