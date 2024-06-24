@@ -66,7 +66,7 @@ public class BrokerProfileController {
         }
     }
 
-   /* @GetMapping("/getByUserId")
+    @GetMapping("/getByUserId")
     public ResponseEntity<?> getBrokerProfileByUserId(@RequestParam Integer userId) {
         try {
             List<BrokerProfileDto> brokers = brokerProfileService.getBrokerByUserId(userId);
@@ -76,5 +76,5 @@ public class BrokerProfileController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get Broker by user ID: " + e.getMessage());
         }
-    }*/
+    }
 }

@@ -19,5 +19,5 @@ public interface BrokerProfileService {
 
     void deleteBrokerProfileById(Integer brokerProfileId) throws BrokerProfileNotFoundException;
 
-    //List<BrokerProfileDto> getBrokerByUserId(Integer userId) throws BrokerProfileNotFoundException;
+    List<BrokerProfileDto> getBrokerByUserId(Integer userId) throws BrokerProfileNotFoundException;
 }
