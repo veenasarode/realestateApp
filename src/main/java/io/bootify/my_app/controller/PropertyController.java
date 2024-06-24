@@ -1,13 +1,17 @@
 package io.bootify.my_app.controller;
 
-import io.bootify.my_app.dto.BrokerProfileDto;
-import io.bootify.my_app.dto.PropertyDto;
+import io.bootify.my_app.dto.*;
+import io.bootify.my_app.exception.PageNotFoundException;
 import io.bootify.my_app.exception.PropertyNotFoundException;
+import io.bootify.my_app.exception.UserNotFound;
+import io.bootify.my_app.exception.UserNotFoundException;
+import io.bootify.my_app.repos.PropertyRepository;
 import io.bootify.my_app.service.PropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +22,8 @@ import java.util.List;
 @RequestMapping("/property")
 public class PropertyController {
 
-
+@Autowired
+private PropertyRepository propertyRepository;
     @Autowired
     private PropertyService propertyService;
 
@@ -44,7 +49,7 @@ public class PropertyController {
         }
     }
 
-    @GetMapping("/getAll")
+ /*   @GetMapping("/getAll")
     public ResponseEntity<?> showAllProperty(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
@@ -60,7 +65,31 @@ public class PropertyController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
+    }*/
+
+    @GetMapping("/getAllProperty")
+    public ResponseEntity<ResponsePropertyDto> getAllProperty(@RequestParam int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
+        try {
+            List<PropertyDto> properties = this.propertyService.getAllProperties(pageNo, pageSize);
+            int totalPages = getTotalPagesForProperties(pageSize);
+            ResponsePropertyDto responseAllUserDto = new ResponsePropertyDto("success", properties, totalPages);
+            return ResponseEntity.status(HttpStatus.OK).body(responseAllUserDto);
+        } catch (UserNotFoundException userNotFoundException) {
+            ResponsePropertyDto responseAllUserDto = new ResponsePropertyDto("unsuccess");
+            responseAllUserDto.setException("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllUserDto);
+        } catch (PageNotFoundException | UserNotFound pageNotFoundException) {
+            ResponsePropertyDto responseAllUserDto = new ResponsePropertyDto("unsuccess");
+            responseAllUserDto.setException("Page not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllUserDto);
+        }
     }
+
+    private int getTotalPagesForProperties(int pageSize) {
+        int totalUsers = propertyRepository.findAll().size();
+        return (int) Math.ceil((double) totalUsers / pageSize);
+    }
+
 
     @PutMapping("/update")
     public ResponseEntity<String> editProperty(@RequestBody PropertyDto propertyDto, @RequestParam Integer propertyId) {
