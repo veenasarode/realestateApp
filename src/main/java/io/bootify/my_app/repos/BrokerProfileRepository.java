@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface BrokerProfileRepository extends JpaRepository<BrokerProfile, Integer> {
 
-    List<BrokerProfile> findByUserUser_UserId(Integer userId);
+   // List<BrokerProfile> findByUserUser_UserId(Integer userId);
 }

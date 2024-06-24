@@ -109,24 +109,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers(int pageNo, int pageSize) throws UserNotFound, PageNotFoundException {
-        List<User> listOfCar = userRepo.getActivateUserOrderedByCreatedAtDesc();
-        if (listOfCar.isEmpty()) {
+        List<User> users = userRepo.getActivateUserOrderedByCreatedAtDesc();
+        if (users.isEmpty()) {
             throw new UserNotFound("User not found");
         }
 
-        int totalCars = listOfCar.size();
-        int totalPages = (int) Math.ceil((double) totalCars / pageSize);
+        int totalUsers = users.size();
+        int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
 
         if (pageNo < 0 || pageNo >= totalPages) {
             throw new PageNotFoundException("Page not found");
         }
 
         int pageStart = (pageNo) * pageSize;
-        int pageEnd = Math.min(pageStart + pageSize, totalCars);
+        int pageEnd = Math.min(pageStart + pageSize, totalUsers);
 
         List<UserDto> listOfUserDto = new ArrayList<>();
         for (int i = pageStart; i < pageEnd; i++) {
-            User user = listOfCar.get(i);
+            User user = users.get(i);
             UserDto userDto = new UserDto(user);
             userDto.setUserId(user.getUserId());
             listOfUserDto.add(userDto);

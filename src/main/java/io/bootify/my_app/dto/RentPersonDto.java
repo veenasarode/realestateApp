@@ -14,15 +14,16 @@ public class RentPersonDto {
     private String address;
     private String moNumber;
     private String rentPersoncol;
+    private String status;
     private Integer userId;
   //  private Set<Integer> leaseIds;
 
     public RentPersonDto(RentPerson rentPerson){
-        this.rentPersonId = rentPerson.getRentPerson();
+        this.rentPersonId = rentPerson.getRentPersonId();
         this.name = rentPerson.getName();
         this.address = rentPerson.getAddress();
         this.moNumber = rentPerson.getMoNumber();
         this.rentPersoncol = rentPerson.getRentPersoncol();
-
+this.status=rentPerson.getStatus();
     }
 }

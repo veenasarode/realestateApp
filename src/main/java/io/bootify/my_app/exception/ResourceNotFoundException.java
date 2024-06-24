@@ -19,6 +19,10 @@ public class ResourceNotFoundException extends Throwable {
         this.fieldValue1 = fieldValue1;
     }
 
+    public ResourceNotFoundException(String rentPersonNotFound) {
+        super(rentPersonNotFound);
+    }
+
     public String getResourceName() {
         return resourceName;
     }

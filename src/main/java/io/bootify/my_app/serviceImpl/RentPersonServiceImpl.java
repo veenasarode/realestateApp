@@ -3,6 +3,8 @@ package io.bootify.my_app.serviceImpl;
 import io.bootify.my_app.domain.RentPerson;
 import io.bootify.my_app.domain.User;
 import io.bootify.my_app.dto.RentPersonDto;
+import io.bootify.my_app.exception.PageNotFoundException;
+import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.repos.LeaseRepository;
 import io.bootify.my_app.repos.RentPersonRepository;
 import io.bootify.my_app.repos.UserRepo;
@@ -11,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RentPersonServiceImpl implements RentPersonService {
@@ -27,15 +29,36 @@ public class RentPersonServiceImpl implements RentPersonService {
     private LeaseRepository leaseRepository;
 
 
+
     @Override
-    public List<RentPersonDto> getAllRentPersons() {
-        try {
-            return rentPersonRepository.findAll().stream()
-                    .map(RentPersonDto::new)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new RuntimeException("Error retrieving rent persons: " + e.getMessage(), e);
+    public List<RentPersonDto> getAllRentPersons(int pageNo, int pageSize) throws ResourceNotFoundException, PageNotFoundException, ResourceNotFoundException {
+        List<RentPerson> rentPersons = rentPersonRepository.getActivateRentPersonOrderedByCreatedAtDesc();
+
+        if (rentPersons.isEmpty()) {
+            throw new ResourceNotFoundException("Rent person not found");
         }
+
+        int totalRentPersons = rentPersons.size();
+        int totalPages = (int) Math.ceil((double) totalRentPersons / pageSize);
+
+        if (pageNo < 0 || pageNo >= totalPages) {
+            throw new PageNotFoundException("Page not found");
+        }
+
+        int pageStart = pageNo * pageSize;
+        int pageEnd = Math.min(pageStart + pageSize, totalRentPersons);
+
+        List<RentPersonDto> listOfRentPersonDto = new ArrayList<>();
+        for (int i = pageStart; i < pageEnd; i++) {
+            RentPerson rentPerson = rentPersons.get(i);
+            RentPersonDto rentPersonDto = new RentPersonDto(rentPerson);
+
+            rentPersonDto.setRentPersonId(rentPerson.getRentPersonId());
+
+            listOfRentPersonDto.add(rentPersonDto);
+        }
+
+        return listOfRentPersonDto;
     }
 
     @Override

@@ -2,12 +2,11 @@ package io.bootify.my_app.controller;
 
 
 import io.bootify.my_app.domain.EmailVerification;
+import io.bootify.my_app.dto.ResponseUserDto;
 import io.bootify.my_app.dto.UserDto;
-import io.bootify.my_app.exception.InvalidOtpException;
-import io.bootify.my_app.exception.OtpExpiredException;
-import io.bootify.my_app.exception.ResourceNotFoundException;
-import io.bootify.my_app.exception.UserAlreadyExistException;
+import io.bootify.my_app.exception.*;
 import io.bootify.my_app.repos.EmailVerificationRepository;
+import io.bootify.my_app.repos.UserRepo;
 import io.bootify.my_app.service.EmailService;
 import io.bootify.my_app.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -15,11 +14,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 @RestController
@@ -31,7 +32,8 @@ public class UserController {
     private UserService userService;
     @Autowired
     private EmailService es;
-
+@Autowired
+private UserRepo userRepo;
     @Autowired
     private EmailVerificationRepository emailVerificationRepository;
 
@@ -147,4 +149,31 @@ public class UserController {
 
         return responseEntity;
     }
+
+
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<ResponseUserDto> getAllUsers(@RequestParam int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
+        try {
+            List<UserDto> listOfUsers = this.userService.getAllUsers(pageNo, pageSize);
+            int totalPages = getTotalPagesForUsers(pageSize);
+            ResponseUserDto responseAllUserDto = new ResponseUserDto("success", listOfUsers, totalPages);
+            return ResponseEntity.status(HttpStatus.OK).body(responseAllUserDto);
+        } catch (UserNotFoundException userNotFoundException) {
+            ResponseUserDto responseAllUserDto = new ResponseUserDto("unsuccess");
+            responseAllUserDto.setException("User not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllUserDto);
+        } catch (PageNotFoundException pageNotFoundException) {
+            ResponseUserDto responseAllUserDto = new ResponseUserDto("unsuccess");
+            responseAllUserDto.setException("Page not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllUserDto);
+        } catch (UserNotFound e) {
+            throw new UsernameNotFoundException(e.getMessage());
+        }
+    }
+
+    private int getTotalPagesForUsers(int pageSize) {
+        int totalUsers = userRepo.findAll().size();
+        return (int) Math.ceil((double) totalUsers / pageSize);
+    }
+
 }

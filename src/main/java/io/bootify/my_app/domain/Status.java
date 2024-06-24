@@ -1,7 +1,7 @@
 package io.bootify.my_app.domain;
 
 public enum Status {
-    PENDING("Pending"),
+
     ACTIVE("Active"),
     DEACTIVATE("Deactivate");
 

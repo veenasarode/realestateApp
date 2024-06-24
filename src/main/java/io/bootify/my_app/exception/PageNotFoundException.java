@@ -1,12 +1,5 @@
 package io.bootify.my_app.exception;
 
-<<<<<<< HEAD
-public class PageNotFoundException extends Throwable {
-    public PageNotFoundException(String pageNotFound) {
-        super(pageNotFound);
-    }
-}
-=======
 
 
 public class PageNotFoundException extends RuntimeException {
@@ -14,4 +7,4 @@ public class PageNotFoundException extends RuntimeException {
         super(message);
     }
 }
->>>>>>> origin/master
+
