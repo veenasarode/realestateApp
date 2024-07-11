@@ -6,7 +6,10 @@ import io.bootify.my_app.domain.Property;
 import io.bootify.my_app.domain.PropertyOwner;
 import io.bootify.my_app.domain.User;
 import io.bootify.my_app.dto.PropertyDto;
+import io.bootify.my_app.dto.UserDto;
+import io.bootify.my_app.exception.PageNotFoundException;
 import io.bootify.my_app.exception.PropertyNotFoundException;
+import io.bootify.my_app.exception.UserNotFound;
 import io.bootify.my_app.repos.LeaseRepository;
 import io.bootify.my_app.repos.PropertyRepository;
 import io.bootify.my_app.repos.ProprtyWonerRepository;
@@ -17,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -139,6 +139,34 @@ public class PropertyServiceImpl implements PropertyService {
         } else {
             throw new PropertyNotFoundException("Property not found with ID: " + propertyId);
         }
+    }
+
+    @Override
+    public List<PropertyDto> getAllProperties(int pageNo, int pageSize) throws PageNotFoundException, UserNotFound {
+        List<Property> properties = propertyRepository.getActivatePropertyOrderedByCreatedAtDesc();
+        if (properties.isEmpty()) {
+            throw new UserNotFound("User not found");
+        }
+
+        int totalProperties = properties.size();
+        int totalPages = (int) Math.ceil((double) totalProperties / pageSize);
+
+        if (pageNo < 0 || pageNo >= totalPages) {
+            throw new PageNotFoundException("Page not found");
+        }
+
+        int pageStart = (pageNo) * pageSize;
+        int pageEnd = Math.min(pageStart + pageSize, totalProperties);
+
+        List<PropertyDto> propertyDtos = new ArrayList<>();
+        for (int i = pageStart; i < pageEnd; i++) {
+          Property property = properties.get(i);
+           PropertyDto propertyDto = new PropertyDto(property);
+            propertyDto.setPropertyId(property.getPropertyId());
+            propertyDtos.add(propertyDto);
+        }
+
+        return propertyDtos;
     }
 
 }

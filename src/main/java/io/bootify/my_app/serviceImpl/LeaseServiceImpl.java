@@ -4,6 +4,8 @@ import io.bootify.my_app.domain.*;
 import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.dto.PropertyDto;
 import io.bootify.my_app.exception.LeaseNotFoundException;
+import io.bootify.my_app.exception.PageNotFoundException;
+import io.bootify.my_app.exception.UserNotFound;
 import io.bootify.my_app.repos.*;
 import io.bootify.my_app.service.LeaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -90,12 +93,38 @@ public class LeaseServiceImpl implements LeaseService {
         }
     }
 
-    @Override
+  /*  @Override
     public Page<LeaseDto> getAllLeases(Pageable pageable) {
         Page<Lease> leases = leaseRepository.findAll(pageable);
         return leases.map(LeaseDto::new);
-    }
+    }*/
+  @Override
+  public List<LeaseDto> getAllLeases(int pageNo, int pageSize) throws PageNotFoundException, UserNotFound {
+      List<Lease> leases = leaseRepository.getActivateLeaseOrderedByCreatedAtDesc();
+      if (leases.isEmpty()) {
+          throw new UserNotFound("User not found");
+      }
 
+      int totalLease = leases.size();
+      int totalPages = (int) Math.ceil((double) totalLease / pageSize);
+
+      if (pageNo < 0 || pageNo >= totalPages) {
+          throw new PageNotFoundException("Page not found");
+      }
+
+      int pageStart = (pageNo) * pageSize;
+      int pageEnd = Math.min(pageStart + pageSize, totalLease);
+
+      List<LeaseDto> leaseDtos = new ArrayList<>();
+      for (int i = pageStart; i < pageEnd; i++) {
+          Lease lease= leases.get(i);
+          LeaseDto leaseDto = new LeaseDto(lease);
+          leaseDto.setLeaseId(lease.getLeaseId());
+          leaseDtos.add(leaseDto);
+      }
+
+      return leaseDtos;
+  }
     @Override
     public LeaseDto getLeaseById(Integer leaseId) throws LeaseNotFoundException {
         Optional<Lease> optionalLease = leaseRepository.findById(leaseId);

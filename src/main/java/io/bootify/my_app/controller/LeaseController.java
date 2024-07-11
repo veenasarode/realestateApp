@@ -2,7 +2,13 @@ package io.bootify.my_app.controller;
 
 import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.dto.PropertyDto;
+import io.bootify.my_app.dto.ResponseLeaseDto;
+import io.bootify.my_app.dto.ResponsePropertyDto;
 import io.bootify.my_app.exception.LeaseNotFoundException;
+import io.bootify.my_app.exception.PageNotFoundException;
+import io.bootify.my_app.exception.UserNotFound;
+import io.bootify.my_app.exception.UserNotFoundException;
+import io.bootify.my_app.repos.LeaseRepository;
 import io.bootify.my_app.service.LeaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +24,8 @@ import java.util.List;
 @RequestMapping("/lease")
 public class LeaseController {
 
+    @Autowired
+    private LeaseRepository leaseRepository;
     @Autowired
     private LeaseService leaseService;
 
@@ -41,23 +49,31 @@ public class LeaseController {
         }
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<?> showAllLeases(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+    @GetMapping("/getAllLeases")
+    public ResponseEntity<ResponseLeaseDto> getAllLeases(@RequestParam int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
         try {
-            Pageable pageable = PageRequest.of(page, size);
-            Page<LeaseDto> allLeases = leaseService.getAllLeases(pageable);
-
-            if (page >= allLeases.getTotalPages()) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Page not found");
-            }
-
-            return new ResponseEntity<>(allLeases, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            List<LeaseDto> leases = this.leaseService.getAllLeases(pageNo, pageSize);
+            int totalPages = getTotalPagesForLeases(pageSize);
+            ResponseLeaseDto responseLeaseDto = new ResponseLeaseDto("success", leases, totalPages);
+            return ResponseEntity.status(HttpStatus.OK).body(responseLeaseDto);
+        } catch (LeaseNotFoundException leaseNotFoundException) {
+            ResponseLeaseDto responseLeaseDto = new ResponseLeaseDto("unsuccess");
+            responseLeaseDto.setException("Lease not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseLeaseDto);
+        } catch (PageNotFoundException | UserNotFound pageNotFoundException) {
+            ResponseLeaseDto responseLeaseDto = new ResponseLeaseDto("unsuccess");
+            responseLeaseDto.setException("Page not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseLeaseDto);
         }
     }
+
+    private int getTotalPagesForLeases(int pageSize) {
+        int totalLeases = leaseRepository.findAll().size(); // Assuming leaseRepository is your repository for leases
+        return (int) Math.ceil((double) totalLeases / pageSize);
+    }
+
+
+
 
 
 

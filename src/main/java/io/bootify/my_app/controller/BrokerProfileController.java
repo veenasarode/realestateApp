@@ -65,7 +65,7 @@ public class BrokerProfileController {
             throw new BrokerProfileNotFoundException("Broker profile not found with ID: " + brokerProfileId);
         }
     }
-
+/*
     @GetMapping("/getByUserId")
     public ResponseEntity<?> getBrokerProfileByUserId(@RequestParam Integer userId) throws BrokerProfileNotFoundException {
         try {
@@ -74,5 +74,5 @@ public class BrokerProfileController {
         } catch (BrokerProfileNotFoundException e) {
             throw new BrokerProfileNotFoundException("Broker profile not found with ID: " + userId);
         }
-    }
+    }*/
 }
