@@ -1,21 +1,27 @@
 package io.bootify.my_app.serviceImpl;
 
 
+import io.bootify.my_app.domain.Lease;
 import io.bootify.my_app.domain.Roles;
 import io.bootify.my_app.domain.User;
 import io.bootify.my_app.domain.UserRole;
+import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.dto.UserDto;
-import io.bootify.my_app.exception.PageNotFoundException;
+import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.exception.UserAlreadyExistException;
-import io.bootify.my_app.exception.UserNotFound;
+import io.bootify.my_app.exception.UserNotFoundException;
 import io.bootify.my_app.repos.RolesRepo;
 import io.bootify.my_app.repos.UserRepo;
 import io.bootify.my_app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -108,30 +114,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers(int pageNo, int pageSize) throws UserNotFound, PageNotFoundException {
-        List<User> users = userRepo.getActivateUserOrderedByCreatedAtDesc();
+    public List<UserDto> getUserByBrokerProfileId(Integer brokerProfileId) {
+        List<User> users = userRepo.findByBrokerProfiles_BrokerProfileId(brokerProfileId);
         if (users.isEmpty()) {
-            throw new UserNotFound("User not found");
+            throw new UserNotFoundException("No Users found for broker profile ID: " + brokerProfileId);
         }
-
-        int totalUsers = users.size();
-        int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
-
-        if (pageNo < 0 || pageNo >= totalPages) {
-            throw new PageNotFoundException("Page not found");
-        }
-
-        int pageStart = (pageNo) * pageSize;
-        int pageEnd = Math.min(pageStart + pageSize, totalUsers);
-
-        List<UserDto> listOfUserDto = new ArrayList<>();
-        for (int i = pageStart; i < pageEnd; i++) {
-            User user = users.get(i);
-            UserDto userDto = new UserDto(user);
-            userDto.setUserId(user.getUserId());
-            listOfUserDto.add(userDto);
-        }
-
-        return listOfUserDto;
+        return users.stream().map(UserDto::new).collect(Collectors.toList());
     }
 }

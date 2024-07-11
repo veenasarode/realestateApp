@@ -67,14 +67,12 @@ public class BrokerProfileController {
     }
 /*
     @GetMapping("/getByUserId")
-    public ResponseEntity<?> getBrokerProfileByUserId(@RequestParam Integer userId) {
+    public ResponseEntity<?> getBrokerProfileByUserId(@RequestParam Integer userId) throws BrokerProfileNotFoundException {
         try {
-            List<BrokerProfileDto> brokers = brokerProfileService.getBrokerByUserId(userId);
+            List<BrokerProfileDto> brokers = this.brokerProfileService.getBrokerByUserId(userId);
             return new ResponseEntity<>(brokers, HttpStatus.OK);
         } catch (BrokerProfileNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Broker found for User ID: " + userId);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get Broker by user ID: " + e.getMessage());
+            throw new BrokerProfileNotFoundException("Broker profile not found with ID: " + userId);
         }
     }*/
 }

@@ -2,11 +2,10 @@ package io.bootify.my_app.controller;
 
 
 import io.bootify.my_app.domain.EmailVerification;
-import io.bootify.my_app.dto.ResponseUserDto;
+import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.dto.UserDto;
 import io.bootify.my_app.exception.*;
 import io.bootify.my_app.repos.EmailVerificationRepository;
-import io.bootify.my_app.repos.UserRepo;
 import io.bootify.my_app.service.EmailService;
 import io.bootify.my_app.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -14,7 +13,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +30,7 @@ public class UserController {
     private UserService userService;
     @Autowired
     private EmailService es;
-@Autowired
-private UserRepo userRepo;
+
     @Autowired
     private EmailVerificationRepository emailVerificationRepository;
 
@@ -150,30 +147,15 @@ private UserRepo userRepo;
         return responseEntity;
     }
 
-
-    @GetMapping("/getAllUsers")
-    public ResponseEntity<ResponseUserDto> getAllUsers(@RequestParam int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
+    @GetMapping("/getByBrokerProfileId")
+    public ResponseEntity<?> getUsersByBrokerProfileId(@RequestParam Integer brokerProfileId) {
         try {
-            List<UserDto> listOfUsers = this.userService.getAllUsers(pageNo, pageSize);
-            int totalPages = getTotalPagesForUsers(pageSize);
-            ResponseUserDto responseAllUserDto = new ResponseUserDto("success", listOfUsers, totalPages);
-            return ResponseEntity.status(HttpStatus.OK).body(responseAllUserDto);
-        } catch (UserNotFoundException userNotFoundException) {
-            ResponseUserDto responseAllUserDto = new ResponseUserDto("unsuccess");
-            responseAllUserDto.setException("User not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllUserDto);
-        } catch (PageNotFoundException pageNotFoundException) {
-            ResponseUserDto responseAllUserDto = new ResponseUserDto("unsuccess");
-            responseAllUserDto.setException("Page not found");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(responseAllUserDto);
-        } catch (UserNotFound e) {
-            throw new UsernameNotFoundException(e.getMessage());
+            List<UserDto> leases = userService.getUserByBrokerProfileId(brokerProfileId);
+            return new ResponseEntity<>(leases, HttpStatus.OK);
+        } catch (LeaseNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No leases found for Broker Profile ID: " + brokerProfileId);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get leases by Broker Profile ID: " + e.getMessage());
         }
     }
-
-    private int getTotalPagesForUsers(int pageSize) {
-        int totalUsers = userRepo.findAll().size();
-        return (int) Math.ceil((double) totalUsers / pageSize);
-    }
-
 }

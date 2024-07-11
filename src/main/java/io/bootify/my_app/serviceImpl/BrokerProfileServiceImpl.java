@@ -78,7 +78,7 @@ public class BrokerProfileServiceImpl implements BrokerProfileService {
 
   /*  @Override
     public List<BrokerProfileDto> getBrokerByUserId(Integer userId) throws BrokerProfileNotFoundException {
-        List<BrokerProfile> brokers = brokerProfileRepository.findByUserUser_UserId(userId);
+        List<BrokerProfile> brokers = brokerProfileRepository.findByUserUserId(userId);
         if (brokers.isEmpty()) {
             throw new BrokerProfileNotFoundException("No Broker found for user ID: " + userId);
         }

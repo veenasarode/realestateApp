@@ -25,11 +25,13 @@ public class BrokerProfile {
     private String fullAddress;
     private String city;
 
-    @OneToOne(mappedBy = "brokerProfile")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id",nullable = false)
     private User user;
-
-    @OneToMany(mappedBy = "brokerProfiles")
-    private Set<Lease> leases;
+//````*/A 2       WWWQa3+
+//     vvrnvt
+//    @OneToMany(mappedBy = "brokerProfiles")
+//    private Set<Lease> leases;
 
     public BrokerProfile(BrokerProfileDto brokerProfileDto){
         this.brokerProfileId = brokerProfileDto.getBrokerProfileId();

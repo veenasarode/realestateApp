@@ -61,9 +61,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private Set<Agreement> agreementSet;
 
-    @OneToOne
-    @JoinColumn(name = "brokerProfile")
-    private BrokerProfile brokerProfile;
+    @OneToMany(mappedBy = "user")
+    private Set<BrokerProfile> brokerProfile;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "user")
     @JsonIgnore
