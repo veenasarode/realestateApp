@@ -46,17 +46,23 @@ public class AgreementServiceImpl implements AgreementService {
     private PropertyRepository propertyRepository;
 
     @Override
-    public void addAgreement(AgreementDto agreementDto) {
+    public AgreementDto addAgreement(AgreementDto agreementDto) {
         try {
             Agreement agreement = new Agreement(agreementDto);
-            agreementRepository.save(agreement);
+
+           Agreement saveAgreement = agreementRepository.save(agreement);
+
+           AgreementDto savedDto = new AgreementDto(saveAgreement);
+
+           return savedDto;
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void updateAgreement(AgreementDto agreementDto, Integer agreementId) {
+    public AgreementDto updateAgreement(AgreementDto agreementDto, Integer agreementId) {
 
         try {
             Optional<Agreement> optionalAgreement = agreementRepository.findById(agreementId);
@@ -68,9 +74,14 @@ public class AgreementServiceImpl implements AgreementService {
                 agreement.setRate(agreementDto.getRate());
 
                 // Set other properties as needed
-                agreementRepository.save(agreement);
+              Agreement updateOne =  agreementRepository.save(agreement);
+
+              AgreementDto updatedDto = new AgreementDto(updateOne);
+
+              return updatedDto;
+
             } else {
-                throw new AgreementNotFoundException("Broker profile not found with ID: " + agreementId);
+                throw new AgreementNotFoundException("Agreeement not found with ID: " + agreementId);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -124,7 +135,7 @@ public class AgreementServiceImpl implements AgreementService {
 
         List<Agreement> agreements = this.agreementRepository.findByUser(user);
 
-        List<AgreementDto> agreementDtos = agreements.stream().map((post)-> this.modelMapper.map(post , AgreementDto.class)).collect(Collectors.toList());
+        List<AgreementDto> agreementDtos = agreements.stream().map((agreement)-> this.modelMapper.map(agreement , AgreementDto.class)).collect(Collectors.toList());
 
         return agreementDtos;
     }

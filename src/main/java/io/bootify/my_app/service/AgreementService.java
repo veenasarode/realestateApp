@@ -16,9 +16,9 @@ import java.util.Optional;
 
 public interface AgreementService {
 
-    void addAgreement(AgreementDto agreementDto);
+    AgreementDto addAgreement(AgreementDto agreementDto);
 
-    void updateAgreement(AgreementDto agreementDto , Integer agreementId);
+    AgreementDto updateAgreement(AgreementDto agreementDto , Integer agreementId);
 
     List<AgreementDto> getAllAgreement();
 

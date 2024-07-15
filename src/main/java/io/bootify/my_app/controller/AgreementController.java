@@ -24,23 +24,30 @@ public class AgreementController {
     @Autowired
     private AgreementService agreementService;
 
-//    @PostMapping("/add")
-//    public ResponseEntity<String> createAgreement(@RequestBody AgreementDto agreementDto) {
-//        try {
-//            this.agreementService.addAgreement(agreementDto);
-//            return ResponseEntity.ok("Agreement created successfully.");
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create Agreement: " + e.getMessage());
-//        }
-//    }
+    @PostMapping("/add")
+    public ResponseEntity<AgreementDto> createAgreement(@RequestBody AgreementDto agreementDto) {
+
+           agreementDto = agreementService.addAgreement(agreementDto);
+
+            ResponseEntity<AgreementDto> responseEntity = new ResponseEntity<>(agreementDto , HttpStatus.CREATED);
+
+            return responseEntity;
+
+           // return ResponseEntity.ok("Agreement created successfully.");
+
+    }
 
     @PutMapping("/update")
-    public ResponseEntity<String> editAgreement(@RequestBody AgreementDto agreementDto, @RequestParam Integer agreementId) {
+    public ResponseEntity<AgreementDto> updateAgreement(@RequestBody AgreementDto agreementDto, @RequestParam Integer agreementId) {
         try {
-            this.agreementService.updateAgreement(agreementDto, agreementId);
-            return ResponseEntity.ok("Agreement updated successfully.");
+         AgreementDto  updatedAgreement = agreementService.updateAgreement(agreementDto, agreementId);
+
+            ResponseEntity<AgreementDto> responseEntity = new ResponseEntity<>(updatedAgreement , HttpStatus.CREATED);
+
+            return responseEntity;
+           // return ResponseEntity.ok("Agreement updated successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update Agreement: " + e.getMessage());
+            throw new RuntimeException("Failed to update agreement" + e.getMessage()) ;
         }
     }
 
