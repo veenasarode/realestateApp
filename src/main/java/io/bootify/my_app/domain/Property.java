@@ -40,6 +40,7 @@ public class Property {
     @Column(length = 45)
     private String comments;
 
+
     @Column(length = 45)
     private String flore;
 
