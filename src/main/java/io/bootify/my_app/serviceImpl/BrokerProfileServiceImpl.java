@@ -1,15 +1,21 @@
 package io.bootify.my_app.serviceImpl;
 
 
+import io.bootify.my_app.domain.Agreement;
 import io.bootify.my_app.domain.BrokerProfile;
-import io.bootify.my_app.domain.Lease;
+import io.bootify.my_app.domain.User;
+import io.bootify.my_app.dto.AgreementDto;
 import io.bootify.my_app.dto.BrokerProfileDto;
-import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.exception.BrokerProfileNotFoundException;
-import io.bootify.my_app.exception.LeaseNotFoundException;
+import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.repos.BrokerProfileRepository;
+import io.bootify.my_app.repos.UserRepo;
 import io.bootify.my_app.service.BrokerProfileService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +27,11 @@ public class BrokerProfileServiceImpl implements BrokerProfileService {
 
     @Autowired
     private BrokerProfileRepository brokerProfileRepository;
+
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public void addBrokerProfile(BrokerProfileDto brokerProfileDto) {
         try {
@@ -57,6 +68,14 @@ public class BrokerProfileServiceImpl implements BrokerProfileService {
                 .map(BrokerProfileDto::new)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<BrokerProfile> findBrokerWithPaginationAndSorting(int offset, int pageSize, String field) {
+        Page<BrokerProfile> brokerProfilePage = brokerProfileRepository.findAll(PageRequest.of(offset, pageSize).withSort((Sort.by(Sort.Direction.DESC, field))));
+        return brokerProfilePage;
+
+    }
+
     @Override
     public BrokerProfileDto getBrokerProfileById(Integer brokerProfileId) throws BrokerProfileNotFoundException {
         Optional<BrokerProfile> optionalBrokerProfile = brokerProfileRepository.findById(brokerProfileId);
@@ -77,12 +96,16 @@ public class BrokerProfileServiceImpl implements BrokerProfileService {
     }
 
     @Override
-    public List<BrokerProfileDto> getBrokerByUserId(Integer userId) throws BrokerProfileNotFoundException {
-        List<BrokerProfile> brokers = brokerProfileRepository.findByUserUserId(userId);
-        if (brokers.isEmpty()) {
-            throw new BrokerProfileNotFoundException("No Broker found for user ID: " + userId);
-        }
-        return brokers.stream().map(BrokerProfileDto::new).collect(Collectors.toList());
+    public List<BrokerProfileDto> getBrokerByUserId(Integer userId) throws ResourceNotFoundException {
+
+        User user = this.userRepo.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User","Id",userId));
+
+        List<BrokerProfile> brokerProfiles = this.brokerProfileRepository.findByUser(user);
+
+        List<BrokerProfileDto> brokerProfileDtos = brokerProfiles.stream().map((post)-> this.modelMapper.map(post , BrokerProfileDto.class)).collect(Collectors.toList());
+
+        return brokerProfileDtos;
     }
 
 

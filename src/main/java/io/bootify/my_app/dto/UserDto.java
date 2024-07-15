@@ -28,6 +28,9 @@ public class UserDto {
 
     private String password;
 
+    private Integer brokerProfile;
+
+
     public UserDto(User user) {
         this.userId = user.getUserId();
         this.name = user.getName();
@@ -36,6 +39,8 @@ public class UserDto {
         this.moNumber = user.getMoNumber();
         this.password = user.getPassword();
         this.status = user.getStatus();
+
+
     }
 
 

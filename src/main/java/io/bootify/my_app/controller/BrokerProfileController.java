@@ -1,12 +1,18 @@
 package io.bootify.my_app.controller;
 
 
+import io.bootify.my_app.domain.BrokerProfile;
+import io.bootify.my_app.dto.AgreementDto;
 import io.bootify.my_app.dto.BrokerProfileDto;
 import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.exception.BrokerProfileNotFoundException;
 import io.bootify.my_app.exception.LeaseNotFoundException;
+import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.service.BrokerProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +46,15 @@ public class BrokerProfileController {
         }
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<List<BrokerProfileDto>> showAllBrokerProfiles() {
-        List<BrokerProfileDto> allBrokerProfiles = this.brokerProfileService.getAllBrokerProfiles();
+//    @GetMapping("/getAll")
+//    public ResponseEntity<List<BrokerProfileDto>> showAllBrokerProfiles() {
+//        List<BrokerProfileDto> allBrokerProfiles = this.brokerProfileService.getAllBrokerProfiles();
+//        return new ResponseEntity<>(allBrokerProfiles, HttpStatus.OK);
+//    }
+
+    @GetMapping("/getAll/{offset}/{pageSize}/{field}")
+    public ResponseEntity<Page<BrokerProfile>> showAllBrokerProfiles(@PathVariable int offset , @PathVariable int pageSize , @PathVariable String field) {
+        Page<BrokerProfile> allBrokerProfiles = this.brokerProfileService.findBrokerWithPaginationAndSorting(offset, pageSize, field);
         return new ResponseEntity<>(allBrokerProfiles, HttpStatus.OK);
     }
 
@@ -66,13 +78,11 @@ public class BrokerProfileController {
         }
     }
 
-    @GetMapping("/getByUserId")
-    public ResponseEntity<?> getBrokerProfileByUserId(@RequestParam Integer userId) throws BrokerProfileNotFoundException {
-        try {
-            List<BrokerProfileDto> brokers = this.brokerProfileService.getBrokerByUserId(userId);
-            return new ResponseEntity<>(brokers, HttpStatus.OK);
-        } catch (BrokerProfileNotFoundException e) {
-            throw new BrokerProfileNotFoundException("Broker profile not found with ID: " + userId);
-        }
+    @GetMapping("/getByUser/user/{userId}")
+    public ResponseEntity<List<BrokerProfileDto>> getBrokerByUser(@PathVariable Integer userId) throws ResourceNotFoundException {
+
+        List<BrokerProfileDto> brokerProfileDtos = this.brokerProfileService.getBrokerByUserId(userId);
+
+        return new ResponseEntity<List<BrokerProfileDto>>(brokerProfileDtos,HttpStatus.OK);
     }
 }

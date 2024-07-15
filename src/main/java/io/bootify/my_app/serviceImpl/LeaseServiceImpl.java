@@ -34,8 +34,8 @@ public class LeaseServiceImpl implements LeaseService {
     @Autowired
     private BrokerProfileRepository brokerProfileRepository;
 
-    @Autowired
-    private RentPersonRepository rentPersonRepository;
+   // @Autowired
+   // private RentPersonRepository rentPersonRepository;
 
 
     @Override

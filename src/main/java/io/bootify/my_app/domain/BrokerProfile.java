@@ -28,10 +28,13 @@ public class BrokerProfile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id",nullable = false)
     private User user;
-//````*/A 2       WWWQa3+
-//     vvrnvt
-//    @OneToMany(mappedBy = "brokerProfiles")
-//    private Set<Lease> leases;
+
+  @OneToMany(mappedBy = "brokerProfiles")
+   private Set<Lease> leases;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "agreementId",nullable = false)
+   private Agreement brokerAgreement;
 
     public BrokerProfile(BrokerProfileDto brokerProfileDto){
         this.brokerProfileId = brokerProfileDto.getBrokerProfileId();

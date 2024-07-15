@@ -1,7 +1,6 @@
 package io.bootify.my_app.service;
 
 
-import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.dto.UserDto;
 import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.exception.UserAlreadyExistException;
@@ -17,5 +16,5 @@ public interface UserService {
 
    public void deleteUser(Integer userId) throws ResourceNotFoundException;
 
-    public List<UserDto> getUserByBrokerProfileId(Integer brokerProfileId);
+    List<UserDto> getUserByBrokerId(Integer brokerId) throws ResourceNotFoundException;
 }

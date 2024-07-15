@@ -2,6 +2,7 @@ package io.bootify.my_app.controller;
 
 
 import io.bootify.my_app.domain.EmailVerification;
+import io.bootify.my_app.dto.AgreementDto;
 import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.dto.UserDto;
 import io.bootify.my_app.exception.*;
@@ -147,15 +148,11 @@ public class UserController {
         return responseEntity;
     }
 
-    @GetMapping("/getByBrokerProfileId")
-    public ResponseEntity<?> getUsersByBrokerProfileId(@RequestParam Integer brokerProfileId) {
-        try {
-            List<UserDto> leases = userService.getUserByBrokerProfileId(brokerProfileId);
-            return new ResponseEntity<>(leases, HttpStatus.OK);
-        } catch (LeaseNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No leases found for Broker Profile ID: " + brokerProfileId);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to get leases by Broker Profile ID: " + e.getMessage());
-        }
+    @GetMapping("/getUserByBroker")
+    public ResponseEntity<List<UserDto>> getUserByBroker(@PathVariable Integer brokerId) throws ResourceNotFoundException {
+
+        List<UserDto> userDtos = this.userService.getUserByBrokerId(brokerId);
+
+        return new ResponseEntity<List<UserDto>>(userDtos,HttpStatus.OK);
     }
 }

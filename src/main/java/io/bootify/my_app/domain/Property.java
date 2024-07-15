@@ -69,3 +69,4 @@ public class Property {
         this.flore = propertyDto.getFlore();
     }
 }
+

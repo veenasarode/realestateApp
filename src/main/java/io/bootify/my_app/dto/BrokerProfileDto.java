@@ -18,6 +18,7 @@ public class BrokerProfileDto {
     private String docNumber;
     private String fullAddress;
     private String city;
+    private Integer userId;
 
     public BrokerProfileDto(BrokerProfile brokerProfile){
         this.brokerProfileId = brokerProfile.getBrokerProfileId();
@@ -25,5 +26,11 @@ public class BrokerProfileDto {
         this.docNumber = brokerProfile.getDocNumber();
         this.fullAddress = brokerProfile.getFullAddress();
         this.city = brokerProfile.getCity();
+       // this.userId  = brokerProfile.getUser().getUserId();
+
+        /*if(brokerProfile.getUser() != null)
+        {
+            this.userId  = brokerProfile.getUser().getUserId();
+        }*/
     }
 }

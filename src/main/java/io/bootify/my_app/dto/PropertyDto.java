@@ -28,6 +28,7 @@ public class PropertyDto {
     private Integer userId;
     private Integer propertyOwnerId;
     private Set<Integer> propertyLeases;
+    private Integer agreementId;
 
     public PropertyDto(Property property){
         this.propertyId = property.getPropertyId();
@@ -40,7 +41,7 @@ public class PropertyDto {
         this.comments = property.getComments();
         this.flore = property.getFlore();
 
-        if (property.getUserUser() != null) {
+       /* if (property.getUserUser() != null) {
             this.userId = property.getUserUser().getUserId();
         }
         if (property.getProprtyWoner() != null) {
@@ -50,6 +51,6 @@ public class PropertyDto {
             this.propertyLeases = property.getPropertyLeases().stream()
                     .map(Lease::getLeaseId)
                     .collect(Collectors.toSet());
-        }
+        }*/
     }
 }

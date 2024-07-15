@@ -52,8 +52,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "userUser")
     private Set<Property> userUserProperties;
 
-    @OneToMany(mappedBy = "userUser")
-    private Set<RentPerson> userUserRentPersons;
+//    @OneToMany(mappedBy = "userUser")
+//    private Set<RentPerson> userUserRentPersons;
 
     @OneToMany(mappedBy = "userUser")
     private Set<Lease> userUserLeases;
@@ -76,6 +76,7 @@ public class User implements UserDetails {
         this.moNumber = userDto.getMoNumber();
         this.password = userDto.getPassword();
         this.status = userDto.getStatus();
+       // this.brokerProfile = userDto.getBrokerProfile();
     }
 
 
