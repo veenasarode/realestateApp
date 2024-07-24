@@ -46,4 +46,10 @@ public class PropertyOwner {
         this.address = dto.getAddress();
         this.status=dto.getStatus();
     }
+
+   /* public PropertyOwner(Integer proprtyWonerId, String moNumber, String address) {
+        this.proprtyWonerId = proprtyWonerId;
+        this.moNumber = moNumber;
+        this.address = address;
+    }*/
 }

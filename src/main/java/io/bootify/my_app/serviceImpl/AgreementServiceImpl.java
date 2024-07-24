@@ -112,7 +112,7 @@ public class AgreementServiceImpl implements AgreementService {
         if (optionalAgreement.isPresent()) {
             return new AgreementDto(optionalAgreement.get());
         } else {
-            throw new AgreementNotFoundException("Broker profile not found with ID: " + agreementId);
+            throw new AgreementNotFoundException("Agreement not found with ID: " + agreementId);
         }
     }
 
@@ -123,7 +123,7 @@ public class AgreementServiceImpl implements AgreementService {
         if (optionalAgreement.isPresent()) {
             agreementRepository.deleteById(agreementId);
         } else {
-            throw new AgreementNotFoundException("Broker profile not found with ID: " + agreementId);
+            throw new AgreementNotFoundException("Agreement not found with ID: " + agreementId);
         }
     }
 

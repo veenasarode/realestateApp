@@ -1,8 +1,10 @@
 package io.bootify.my_app.serviceImpl;
 
 
+import io.bootify.my_app.domain.Agreement;
 import io.bootify.my_app.domain.BrokerProfile;
 import io.bootify.my_app.domain.Lease;
+import io.bootify.my_app.dto.AgreementDto;
 import io.bootify.my_app.dto.BrokerProfileDto;
 import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.exception.BrokerProfileNotFoundException;
@@ -10,6 +12,9 @@ import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.repos.BrokerProfileRepository;
 import io.bootify.my_app.service.BrokerProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,16 +27,23 @@ public class BrokerProfileServiceImpl implements BrokerProfileService {
     @Autowired
     private BrokerProfileRepository brokerProfileRepository;
 
-    public void addBrokerProfile(BrokerProfileDto brokerProfileDto) {
+    public BrokerProfileDto addBrokerProfile(BrokerProfileDto brokerProfileDto) {
         try {
+
             BrokerProfile brokerProfile = new BrokerProfile(brokerProfileDto);
-            brokerProfileRepository.save(brokerProfile);
+
+           BrokerProfile saveBrokerProfile = brokerProfileRepository.save(brokerProfile);
+
+           BrokerProfileDto saveDto = new BrokerProfileDto(saveBrokerProfile);
+
+           return saveDto;
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 @Override
-    public void updateBrokerProfile(BrokerProfileDto brokerProfileDto, Integer brokerProfileId) {
+    public BrokerProfileDto updateBrokerProfile(BrokerProfileDto brokerProfileDto, Integer brokerProfileId) {
         try {
             Optional<BrokerProfile> optionalBrokerProfile = brokerProfileRepository.findById(brokerProfileId);
 
@@ -42,7 +54,11 @@ public class BrokerProfileServiceImpl implements BrokerProfileService {
                 brokerProfile.setFullAddress(brokerProfileDto.getFullAddress());
                 brokerProfile.setCity(brokerProfileDto.getCity());
                 // Set other properties as needed
-                brokerProfileRepository.save(brokerProfile);
+                BrokerProfile updateOne =  brokerProfileRepository.save(brokerProfile);
+
+                BrokerProfileDto updatedDto = new BrokerProfileDto(updateOne);
+
+                return updatedDto;
             } else {
                 throw new BrokerProfileNotFoundException("Broker profile not found with ID: " + brokerProfileId);
             }
@@ -57,6 +73,13 @@ public class BrokerProfileServiceImpl implements BrokerProfileService {
                 .map(BrokerProfileDto::new)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Page<BrokerProfile> findBrokerProfileWithPaginationAndSorting(int offset, int pageSize, String field) {
+        Page<BrokerProfile> brokerProfilePagePage = brokerProfileRepository.findAll(PageRequest.of(offset, pageSize).withSort((Sort.by(Sort.Direction.DESC, field))));
+        return brokerProfilePagePage;
+    }
+
     @Override
     public BrokerProfileDto getBrokerProfileById(Integer brokerProfileId) throws BrokerProfileNotFoundException {
         Optional<BrokerProfile> optionalBrokerProfile = brokerProfileRepository.findById(brokerProfileId);

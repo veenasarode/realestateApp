@@ -42,7 +42,7 @@ public class LeaseServiceImpl implements LeaseService {
 
 
     @Override
-    public String addLease(LeaseDto leaseDto) {
+    public LeaseDto addLease(LeaseDto leaseDto) {
         try {
             Property property = propertyRepository.findById(leaseDto.getPropertyId())
                     .orElseThrow(() -> new RuntimeException("Property not found"));
@@ -61,15 +61,16 @@ public class LeaseServiceImpl implements LeaseService {
             lease.setBrokerProfiles(brokerProfile);
             lease.setProprtyWoner(propertyOwner);
             //lease.setRentPerson(rentPerson);
-            leaseRepository.save(lease);
-            return "success";
+           Lease saveLease =  leaseRepository.save(lease);
+           LeaseDto saveDto = new LeaseDto(saveLease);
+            return saveDto;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public String updateLease(LeaseDto leaseDto, Integer leaseId) {
+    public LeaseDto updateLease(LeaseDto leaseDto, Integer leaseId) {
         try {
             Optional<Lease> optionalLease = leaseRepository.findById(leaseId);
             if (optionalLease.isPresent()) {
@@ -83,8 +84,9 @@ public class LeaseServiceImpl implements LeaseService {
                 lease.setPropertyBookingcol(leaseDto.getPropertyBookingcol());
                 lease.setOwnerId(leaseDto.getOwnerId());
 
-                leaseRepository.save(lease);
-                return "success";
+               Lease lease1 =  leaseRepository.save(lease);
+               LeaseDto updatedLeaseDto = new LeaseDto(lease1);
+                return updatedLeaseDto;
             } else {
                 throw new LeaseNotFoundException("Lease not found with ID: " + leaseId);
             }

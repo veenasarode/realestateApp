@@ -12,7 +12,6 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class Agreement {
 
@@ -48,4 +47,13 @@ public class Agreement {
         this.rate = agreementDto.getRate();
     }
 
+    public Agreement() {
+    }
+
+    public Agreement(Integer agreementId, Double duration, String type, Double rate) {
+        this.agreementId = agreementId;
+        this.duration = duration;
+        this.type = type;
+        this.rate = rate;
+    }
 }

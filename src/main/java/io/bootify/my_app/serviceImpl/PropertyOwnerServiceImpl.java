@@ -62,7 +62,7 @@ public class PropertyOwnerServiceImpl implements PropertyOwnerService {
     }
 
     @Override
-    public PropertyOwner createPropertyOwner(PropertyOwnerDto propertyOwnerDto) {
+    public PropertyOwnerDto createPropertyOwner(PropertyOwnerDto propertyOwnerDto) {
         try {
 
             User user = userRepo.findById(propertyOwnerDto.getUserId())
@@ -71,7 +71,10 @@ public class PropertyOwnerServiceImpl implements PropertyOwnerService {
 
             propertyOwner.setUserUser(user);
 
-            return propertyOwnerRepository.save(propertyOwner);
+            PropertyOwner savePropertyOwner = propertyOwnerRepository.save(propertyOwner);
+
+            return new PropertyOwnerDto(savePropertyOwner);
+
         } catch (DataIntegrityViolationException e) {
             throw new RuntimeException("Error creating property owner: " + e.getMessage(), e);
         } catch (Exception e) {

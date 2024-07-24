@@ -13,7 +13,7 @@ import java.util.Optional;
 public interface PropertyOwnerService {
     public List<PropertyOwnerDto> getAllPropertyOwners(int pageNo, int pageSize) throws UserNotFound, PageNotFoundException, ResourceNotFoundException;
     Optional<PropertyOwner> getPropertyOwnerById(Integer id);
-    PropertyOwner createPropertyOwner(PropertyOwnerDto propertyOwnerDto);
+    PropertyOwnerDto createPropertyOwner(PropertyOwnerDto propertyOwnerDto);
     PropertyOwner updatePropertyOwner(Integer id, PropertyOwnerDto propertyOwnerDto);
     void deletePropertyOwner(Integer id);
 }

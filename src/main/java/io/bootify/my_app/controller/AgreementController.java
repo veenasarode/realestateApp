@@ -42,7 +42,7 @@ public class AgreementController {
         try {
          AgreementDto  updatedAgreement = agreementService.updateAgreement(agreementDto, agreementId);
 
-            ResponseEntity<AgreementDto> responseEntity = new ResponseEntity<>(updatedAgreement , HttpStatus.CREATED);
+            ResponseEntity<AgreementDto> responseEntity = new ResponseEntity<>(updatedAgreement , HttpStatus.OK);
 
             return responseEntity;
            // return ResponseEntity.ok("Agreement updated successfully.");
@@ -58,13 +58,13 @@ public class AgreementController {
 //    }
 
     @GetMapping("/getAll/{offset}/{pageSize}/{field}")
-    public ResponseEntity<Page<Agreement>> showAllAgreement(@PathVariable int offset , @PathVariable int pageSize , @PathVariable String field) {
+    public ResponseEntity<Object> showAllAgreement(@PathVariable int offset , @PathVariable int pageSize , @PathVariable String field) {
         Page<Agreement> allAgreements = this.agreementService.findAgreementWithPaginationAndSorting(offset, pageSize, field);
         return new ResponseEntity<>(allAgreements, HttpStatus.OK);
     }
 
     @GetMapping("/getById")
-    public ResponseEntity<?> showAgreementById(@RequestParam Integer agreementId)  {
+    public ResponseEntity<AgreementDto> showAgreementById(@RequestParam Integer agreementId)  {
         try {
             AgreementDto agreementDto = this.agreementService.getAgreementById(agreementId);
             return new ResponseEntity<>(agreementDto, HttpStatus.OK);

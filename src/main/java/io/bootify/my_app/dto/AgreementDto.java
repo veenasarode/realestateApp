@@ -36,4 +36,10 @@ public class AgreementDto {
         this.rate = agreement.getRate();
     }
 
+    public AgreementDto(Integer agreementId, Double duration, String type, Double rate) {
+        this.agreementId = agreementId;
+        this.duration = duration;
+        this.type = type;
+        this.rate = rate;
+    }
 }

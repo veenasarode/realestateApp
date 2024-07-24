@@ -1,9 +1,6 @@
 package io.bootify.my_app.controller;
 
-import io.bootify.my_app.dto.LeaseDto;
-import io.bootify.my_app.dto.PropertyDto;
-import io.bootify.my_app.dto.ResponseLeaseDto;
-import io.bootify.my_app.dto.ResponsePropertyDto;
+import io.bootify.my_app.dto.*;
 import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.exception.PageNotFoundException;
 import io.bootify.my_app.exception.UserNotFound;
@@ -30,12 +27,17 @@ public class LeaseController {
     private LeaseService leaseService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> createLease(@RequestBody LeaseDto leaseDto){
+    public ResponseEntity<LeaseDto> createLease(@RequestBody LeaseDto leaseDto){
         try {
-            this.leaseService.addLease(leaseDto);
-            return ResponseEntity.ok("Lease added successfully.");
+
+            LeaseDto saveLease = leaseService.addLease(leaseDto);
+
+            ResponseEntity<LeaseDto> responseEntity = new ResponseEntity<>(saveLease , HttpStatus.CREATED);
+
+            return responseEntity;
+
         }catch (RuntimeException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed create Lease: " + e.getMessage());
+            throw new RuntimeException("Failed to create Lease" + e.getMessage()) ;
         }
     }
 
@@ -52,7 +54,7 @@ public class LeaseController {
     @GetMapping("/getAllLeases")
     public ResponseEntity<ResponseLeaseDto> getAllLeases(@RequestParam int pageNo, @RequestParam(defaultValue = "10") int pageSize) {
         try {
-            List<LeaseDto> leases = this.leaseService.getAllLeases(pageNo, pageSize);
+            List<LeaseDto> leases = leaseService.getAllLeases(pageNo, pageSize);
             int totalPages = getTotalPagesForLeases(pageSize);
             ResponseLeaseDto responseLeaseDto = new ResponseLeaseDto("success", leases, totalPages);
             return ResponseEntity.status(HttpStatus.OK).body(responseLeaseDto);
@@ -67,15 +69,10 @@ public class LeaseController {
         }
     }
 
-    private int getTotalPagesForLeases(int pageSize) {
-        int totalLeases = leaseRepository.findAll().size(); // Assuming leaseRepository is your repository for leases
+    public int getTotalPagesForLeases(int pageSize) {
+        int totalLeases = this.leaseRepository.findAll().size(); // Assuming leaseRepository is your repository for leases
         return (int) Math.ceil((double) totalLeases / pageSize);
     }
-
-
-
-
-
 
 
 
@@ -118,12 +115,17 @@ public class LeaseController {
 
 
     @PutMapping("/update")
-    public ResponseEntity<String> editLease(@RequestBody LeaseDto leaseDto, @RequestParam Integer leaseId) {
+    public ResponseEntity<LeaseDto> editLease(@RequestBody LeaseDto leaseDto, @RequestParam Integer leaseId) {
         try {
-            this.leaseService.updateLease(leaseDto, leaseId);
-            return ResponseEntity.ok("Lease updated successfully.");
+
+           LeaseDto updatedLease = leaseService.updateLease(leaseDto, leaseId);
+
+            ResponseEntity<LeaseDto> responseEntity = new ResponseEntity<>(updatedLease , HttpStatus.OK);
+
+            return responseEntity;
+
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update lease: " + e.getMessage());
+            throw new RuntimeException("Failed to update Brokerprofile" + e.getMessage()) ;
         }
     }
 

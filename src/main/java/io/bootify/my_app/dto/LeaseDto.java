@@ -29,6 +29,11 @@ public class LeaseDto {
     private Integer propertyOwnerId;
     private Integer brokerProfileId;
 
+    public LeaseDto(Integer leaseId, String status) {
+        this.leaseId = leaseId;
+        this.status = status;
+    }
+
     public LeaseDto(Lease lease) {
         this.leaseId = lease.getLeaseId();
         this.startDate = lease.getStartDate();

@@ -1,12 +1,16 @@
 package io.bootify.my_app.controller;
 
 
+import io.bootify.my_app.domain.Agreement;
+import io.bootify.my_app.domain.BrokerProfile;
+import io.bootify.my_app.dto.AgreementDto;
 import io.bootify.my_app.dto.BrokerProfileDto;
 import io.bootify.my_app.dto.LeaseDto;
 import io.bootify.my_app.exception.BrokerProfileNotFoundException;
 import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.service.BrokerProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,29 +25,44 @@ public class BrokerProfileController {
     private BrokerProfileService brokerProfileService;
 
     @PostMapping("/add")
-    public ResponseEntity<String> createBrokerProfile(@RequestBody BrokerProfileDto brokerProfileDto) {
+    public ResponseEntity<BrokerProfileDto> createBrokerProfile(@RequestBody BrokerProfileDto brokerProfileDto) {
         try {
-            this.brokerProfileService.addBrokerProfile(brokerProfileDto);
-            return ResponseEntity.ok("Broker profile created successfully.");
+
+           brokerProfileDto = brokerProfileService.addBrokerProfile(brokerProfileDto);
+
+            ResponseEntity<BrokerProfileDto> responseEntity = new ResponseEntity<>(brokerProfileDto , HttpStatus.CREATED);
+
+            return responseEntity;
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create broker profile: " + e.getMessage());
+            throw new RuntimeException("Failed to create Brokerprofile" + e.getMessage()) ;
         }
     }
 
     @PutMapping("/update")
-    public ResponseEntity<String> editBrokerProfile(@RequestBody BrokerProfileDto brokerProfileDto, @RequestParam Integer brokerProfileId) {
+    public ResponseEntity<BrokerProfileDto> editBrokerProfile(@RequestBody BrokerProfileDto brokerProfileDto, @RequestParam Integer brokerProfileId) {
         try {
-            this.brokerProfileService.updateBrokerProfile(brokerProfileDto, brokerProfileId);
-            return ResponseEntity.ok("Broker profile updated successfully.");
+            BrokerProfileDto updatedBroker = brokerProfileService.updateBrokerProfile(brokerProfileDto, brokerProfileId);
+
+            ResponseEntity<BrokerProfileDto> responseEntity = new ResponseEntity<>(updatedBroker , HttpStatus.OK);
+
+            return responseEntity;
+
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update broker profile: " + e.getMessage());
+            throw new RuntimeException("Failed to update Brokerprofile" + e.getMessage()) ;
         }
     }
 
-    @GetMapping("/getAll")
+    /*@GetMapping("/getAll")
     public ResponseEntity<List<BrokerProfileDto>> showAllBrokerProfiles() {
         List<BrokerProfileDto> allBrokerProfiles = this.brokerProfileService.getAllBrokerProfiles();
         return new ResponseEntity<>(allBrokerProfiles, HttpStatus.OK);
+    }*/
+
+    @GetMapping("/getAll/{offset}/{pageSize}/{field}")
+    public ResponseEntity<Object> showAllBrokerProfile(@PathVariable int offset , @PathVariable int pageSize , @PathVariable String field) {
+        Page<BrokerProfile> allBrokers = this.brokerProfileService.findBrokerProfileWithPaginationAndSorting(offset, pageSize, field);
+        return new ResponseEntity<>(allBrokers, HttpStatus.OK);
     }
 
     @GetMapping("/getById")
@@ -67,10 +86,10 @@ public class BrokerProfileController {
     }
 
     @GetMapping("/getByUserId")
-    public ResponseEntity<?> getBrokerProfileByUserId(@RequestParam Integer userId) throws BrokerProfileNotFoundException {
+    public ResponseEntity<List<BrokerProfileDto>> getBrokerProfileByUserId(@RequestParam Integer userId) throws BrokerProfileNotFoundException {
         try {
             List<BrokerProfileDto> brokers = this.brokerProfileService.getBrokerByUserId(userId);
-            return new ResponseEntity<>(brokers, HttpStatus.OK);
+            return new ResponseEntity<List<BrokerProfileDto>>(brokers, HttpStatus.OK);
         } catch (BrokerProfileNotFoundException e) {
             throw new BrokerProfileNotFoundException("Broker profile not found with ID: " + userId);
         }

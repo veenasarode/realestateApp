@@ -36,6 +36,14 @@ public class BrokerProfile {
     @JoinColumn(name = "agreementId",nullable = false)
    private Agreement brokerAgreement;
 
+    public BrokerProfile(Integer brokerProfileId, String name, String docNumber, String fullAddress, String city) {
+        this.brokerProfileId = brokerProfileId;
+        this.name = name;
+        this.docNumber = docNumber;
+        this.fullAddress = fullAddress;
+        this.city = city;
+    }
+
     public BrokerProfile(BrokerProfileDto brokerProfileDto){
         this.brokerProfileId = brokerProfileDto.getBrokerProfileId();
         this.name = brokerProfileDto.getName();

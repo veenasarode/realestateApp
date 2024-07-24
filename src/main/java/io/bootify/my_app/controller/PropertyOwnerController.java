@@ -32,7 +32,7 @@ private ProprtyWonerRepository proprtyWonerRepository;
     @PostMapping("/")
     public ResponseEntity<?> createPropertyOwner(@RequestBody PropertyOwnerDto propertyOwnerDto) {
         try {
-            PropertyOwner propertyOwner = propertyOwnerService.createPropertyOwner(propertyOwnerDto);
+            PropertyOwnerDto propertyOwnerDto1 = propertyOwnerService.createPropertyOwner(propertyOwnerDto);
             return ResponseEntity.ok("Property Owner added successfully");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
