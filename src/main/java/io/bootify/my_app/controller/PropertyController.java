@@ -28,12 +28,15 @@ private PropertyRepository propertyRepository;
     private PropertyService propertyService;
 
     @PostMapping("/add")
-    public ResponseEntity<?> createProperty(@RequestBody PropertyDto propertyDto){
+    public ResponseEntity<PropertyDto> createProperty(@RequestBody PropertyDto propertyDto){
        try {
-           this.propertyService.addProperty(propertyDto);
-           return ResponseEntity.ok("Property Added Succesfully");
+           propertyDto = propertyService.addProperty(propertyDto);
+
+           ResponseEntity<PropertyDto> responseEntity = new ResponseEntity<>(propertyDto , HttpStatus.CREATED);
+
+           return responseEntity;
        } catch (RuntimeException e){
-           return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add property: " + e.getMessage());
+           throw new RuntimeException("Failed to create Property" + e.getMessage()) ;
        }
     }
 
@@ -92,12 +95,15 @@ private PropertyRepository propertyRepository;
 
 
     @PutMapping("/update")
-    public ResponseEntity<String> editProperty(@RequestBody PropertyDto propertyDto, @RequestParam Integer propertyId) {
+    public ResponseEntity<PropertyDto> editProperty(@RequestBody PropertyDto propertyDto, @RequestParam Integer propertyId) {
         try {
-            this.propertyService.updateProperty(propertyDto, propertyId);
-            return ResponseEntity.ok("Property updated successfully.");
+            propertyDto = propertyService.updateProperty(propertyDto, propertyId);
+
+            ResponseEntity<PropertyDto> responseEntity = new ResponseEntity<>(propertyDto , HttpStatus.OK);
+
+            return responseEntity;
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update property: " + e.getMessage());
+            throw new RuntimeException("Failed to update Property" + e.getMessage()) ;
         }
     }
 

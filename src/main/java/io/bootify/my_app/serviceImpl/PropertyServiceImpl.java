@@ -36,7 +36,7 @@ public class PropertyServiceImpl implements PropertyService {
 
 
     @Override
-    public String addProperty(PropertyDto propertyDto) {
+    public PropertyDto addProperty(PropertyDto propertyDto) {
         try {
             User user = userRepo.findById(propertyDto.getUserId())
                     .orElseThrow(() -> new RuntimeException("User not found"));
@@ -57,14 +57,18 @@ public class PropertyServiceImpl implements PropertyService {
             property.setProprtyWoner(propertyOwner);
             property.setPropertyLeases(leases);
 
-            propertyRepository.save(property);
-            return "success";
+           Property saveOne =  propertyRepository.save(property);
+
+           PropertyDto savedProperty = new PropertyDto(saveOne);
+
+            return savedProperty;
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
     @Override
-    public String updateProperty(PropertyDto propertyDto,Integer propertyId) {
+    public PropertyDto updateProperty(PropertyDto propertyDto,Integer propertyId) {
         try {
             Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
             if (optionalProperty.isPresent()) {
@@ -79,9 +83,11 @@ public class PropertyServiceImpl implements PropertyService {
                 property.setComments(propertyDto.getComments());
                 property.setFlore(propertyDto.getFlore());
 
-                propertyRepository.save(property);
+               Property updatedOne =  propertyRepository.save(property);
 
-                return "success";
+               PropertyDto updatedProperty = new PropertyDto(updatedOne);
+
+                return updatedProperty;
             } else {
                 throw new PropertyNotFoundException("Property not found with ID: " + propertyDto.getPropertyId());
             }

@@ -30,6 +30,11 @@ public class PropertyDto {
     private Set<Integer> propertyLeases;
     private Integer agreementId;
 
+    public PropertyDto(Integer propertyId, String name) {
+        this.propertyId = propertyId;
+        this.name = name;
+    }
+
     public PropertyDto(Property property){
         this.propertyId = property.getPropertyId();
         this.name = property.getName();

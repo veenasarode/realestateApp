@@ -13,10 +13,10 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PropertyService {
-   public String addProperty(PropertyDto propertyDto);
+   public PropertyDto addProperty(PropertyDto propertyDto);
 
 
-   String updateProperty(PropertyDto propertyDto, Integer propertyId);
+   PropertyDto updateProperty(PropertyDto propertyDto, Integer propertyId);
 
    Page<PropertyDto> getAllProperties(Pageable pageable);
 
