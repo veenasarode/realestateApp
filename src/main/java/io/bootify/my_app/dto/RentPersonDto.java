@@ -18,6 +18,12 @@ public class RentPersonDto {
     private Integer userId;
   //  private Set<Integer> leaseIds;
 
+
+    public RentPersonDto(Integer rentPersonId, String name) {
+        this.rentPersonId = rentPersonId;
+        this.name = name;
+    }
+
     public RentPersonDto(RentPerson rentPerson){
         this.rentPersonId = rentPerson.getRentPersonId();
         this.name = rentPerson.getName();

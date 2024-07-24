@@ -38,6 +38,10 @@ public class RentPerson {
     private User userUser;
 
 
+    public RentPerson(Integer rentPersonId, String name) {
+        this.rentPersonId = rentPersonId;
+        this.name = name;
+    }
 
     public RentPerson(RentPersonDto rentPersonDto) {
         this.rentPersonId = rentPersonDto.getRentPersonId();

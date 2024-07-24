@@ -1,9 +1,12 @@
 package io.bootify.my_app.repos.controller;
 
 import io.bootify.my_app.controller.RentPersonController;
+import io.bootify.my_app.domain.RentPerson;
 import io.bootify.my_app.dto.LeaseDto;
+import io.bootify.my_app.dto.RentPersonDto;
 import io.bootify.my_app.exception.LeaseNotFoundException;
 import io.bootify.my_app.exception.RentPersonNotFoundException;
+import io.bootify.my_app.repos.RentPersonRepository;
 import io.bootify.my_app.service.RentPersonService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -31,6 +35,9 @@ public class RentPersonControllerTest {
 
     @Mock
     private RentPersonService rentPersonService; // Mocked service
+
+    @Mock
+    private RentPersonRepository rentPersonRepository;
 
     @InjectMocks
     private RentPersonController rentPersonController; // Controller under test
@@ -44,25 +51,25 @@ public class RentPersonControllerTest {
     }
 
 
-   /* @Test
-    @DisplayName("Test Success scenario for saving new Lease")
-    public void testSaveLease()
+    @Test
+    @DisplayName("Test Success scenario for saving new RentPerson")
+    public void testSaveRentPerson()
     {
-        LeaseDto leaseDto = new LeaseDto();
-        leaseDto.setStatus("Active");
+        RentPersonDto rentPersonDto = new RentPersonDto();
+        rentPersonDto.setName("ABC");
 
-        LeaseDto saveLease = new LeaseDto();
-        saveLease.setLeaseId(1);
-        saveLease.setStatus(leaseDto.getStatus());
+        RentPersonDto saveRentPerson = new RentPersonDto();
+        saveRentPerson.setRentPersonId(1);
+        saveRentPerson.setName(rentPersonDto.getName());
 
-        when(leaseService.addLease(leaseDto)).thenReturn(saveLease);
+        when(rentPersonService.createRentPerson(rentPersonDto)).thenReturn(saveRentPerson);
 
-        ResponseEntity<LeaseDto> responseEntity = leaseController.createLease(leaseDto);
+        ResponseEntity<RentPersonDto> responseEntity = rentPersonController.createRentPerson(rentPersonDto);
 
-        Assertions.assertNotNull(responseEntity.getBody().getLeaseId());
+        Assertions.assertNotNull(responseEntity.getBody().getRentPersonId());
 
         assertEquals(HttpStatus.CREATED.value() ,  responseEntity.getStatusCodeValue());
-    }*/
+    }
 
     /*@Test
     @DisplayName("Test Success scenario for Fetching all lease")
@@ -133,44 +140,45 @@ public class RentPersonControllerTest {
         assertEquals(2, responseLeaseDto.getTotalPages());
     }*/
 
-    /*@Test
-    @DisplayName("Test Success scenario for updating  lease")
-    public void testUpdateLease()
+    @Test
+    @DisplayName("Test Success scenario for updating  RentPerson")
+    public void testUpdateRentPerson()
     {
-        Integer leaseId = 1;
+        Integer rentPersonId = 1;
 
-        LeaseDto leaseDto = new LeaseDto();
+        RentPersonDto rentPersonDto = new RentPersonDto();
 
-        leaseDto.setStatus("Active");
+        rentPersonDto.setMoNumber("123456789");
 
-        when(leaseService.updateLease(Mockito.any() , Mockito.anyInt())).thenReturn(leaseDto);
+        when(rentPersonService.updateRentPerson(rentPersonId , rentPersonDto)).thenReturn(rentPersonDto);
 
-        ResponseEntity<LeaseDto> responseEntity = leaseController.editLease(leaseDto , leaseId);
+        ResponseEntity<?> responseEntity = rentPersonController.updateRentPerson(rentPersonId , rentPersonDto);
 
-        assertEquals("Active" , responseEntity.getBody().getStatus());
+        assertEquals("123456789" , rentPersonDto.getMoNumber());
 
         Assertions.assertEquals(HttpStatus.OK.value() , responseEntity.getStatusCodeValue());
-    }*/
+    }
 
-    /*@Test
-    @DisplayName("Test Success scenario for get lease by Id")
-    public void testGetLeaseById() throws Exception {
+
+    @Test
+    @DisplayName("Test Success scenario for get rentPerson by Id")
+    public void testGetRentPersonById() throws Exception {
 
         // Given
-        Integer leaseId = 1;
+        Integer rentPersonId = 1;
 
-        LeaseDto leaseDto = new LeaseDto(leaseId ,"Active" );
+        RentPersonDto rentPersonDto = new RentPersonDto(rentPersonId ,"ABC" );
 
-        when(leaseService.getLeaseById(leaseDto.getLeaseId())).thenReturn(leaseDto);
+        when(rentPersonService.getRentPersonById(rentPersonDto.getRentPersonId())).thenReturn(rentPersonDto);
 
         // When
-        ResponseEntity<?> response = leaseController.getLeaseById(leaseId);
+        ResponseEntity<RentPersonDto> response = rentPersonController.getRentPersonById(rentPersonId);
 
         // Then
-        verify(leaseService, times(1)).getLeaseById(leaseId);
+        verify(rentPersonService, times(1)).getRentPersonById(rentPersonId);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(leaseDto, response.getBody());
-    }*/
+        assertEquals(rentPersonDto, response.getBody());
+    }
 
 
 
@@ -208,97 +216,6 @@ public class RentPersonControllerTest {
         // Then
         assertEquals(HttpStatus.NOT_FOUND.value(), responseEntity.getStatusCodeValue());
         assertEquals("No leases found for User ID: " + userId, responseEntity.getBody());
-    }*/
-
-    /*@Test
-    @DisplayName("Test Exception scenario for fetching leases by user ID")
-    public void testGetLeasesByUserId_Exception() throws Exception {
-        // Given
-        Integer userId = 1;
-
-        when(leaseService.getLeasesByUserId(userId)).thenThrow(new RuntimeException("Unexpected error"));
-
-        // When
-        ResponseEntity<?> responseEntity = leaseController.getLeasesByUserId(userId);
-
-        // Then
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), responseEntity.getStatusCodeValue());
-        assertEquals("Failed to get leases by user ID: Unexpected error", responseEntity.getBody());
-    }*/
-
-    /*@Test
-    @DisplayName("Test Success scenario for fetching leases by propertyOwner ID")
-    public void testGetLeasesByPropertyOwnerId_Success() throws Exception {
-        // Given
-        Integer propertyOwnerId = 1;
-
-        LeaseDto lease1 = new LeaseDto(1, "Active");
-        LeaseDto lease2 = new LeaseDto(2, "Inactive");
-
-        List<LeaseDto> leases = Arrays.asList(lease1, lease2);
-
-        when(leaseService.getLeasesByPropertyOwnerId(propertyOwnerId)).thenReturn(leases);
-
-        // When
-        ResponseEntity<?> responseEntity = leaseController.getLeasesByPropertyOwnerId(propertyOwnerId);
-
-        // Then
-        assertEquals(HttpStatus.OK.value(), responseEntity.getStatusCodeValue());
-        assertEquals(leases, responseEntity.getBody());
-    }*/
-
-   /* @Test
-    @DisplayName("Test LeaseNotFoundException scenario for fetching leases by propertyOwner ID")
-    public void testGetLeasesByPropertyOwnerId_LeaseNotFoundException() throws Exception {
-        // Given
-        Integer propertyOwnerId = 1;
-
-        when(leaseService.getLeasesByPropertyOwnerId(propertyOwnerId)).thenThrow(new LeaseNotFoundException("No leases found for User ID: " + propertyOwnerId));
-
-        // When
-        ResponseEntity<?> responseEntity = leaseController.getLeasesByPropertyOwnerId(propertyOwnerId);
-
-        // Then
-        assertEquals(HttpStatus.NOT_FOUND.value(), responseEntity.getStatusCodeValue());
-        assertEquals("No leases found for PropertyOwner ID: " + propertyOwnerId, responseEntity.getBody());
-    }*/
-
-   /* @Test
-    @DisplayName("Test Exception scenario for fetching leases by propertyOwner ID")
-    public void testGetLeasesByPropertyOwnerId_Exception() throws Exception {
-        // Given
-        Integer propertyOwnerId = 1;
-
-        when(leaseService.getLeasesByPropertyOwnerId(propertyOwnerId)).thenThrow(new RuntimeException("Unexpected error"));
-
-        // When
-        ResponseEntity<?> responseEntity = leaseController.getLeasesByPropertyOwnerId(propertyOwnerId);
-
-        // Then
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), responseEntity.getStatusCodeValue());
-        assertEquals("Failed to get leases by PropertyOwner ID: Unexpected error", responseEntity.getBody());
-    }*/
-
-    /*@Test
-    @DisplayName("Test Success scenario for fetching leases by brokerProfile ID")
-    public void testGetLeasesByBrokerProfileId_Success() throws Exception {
-
-        // Given
-        Integer brokerId = 1;
-
-        LeaseDto lease1 = new LeaseDto(1, "Active");
-        LeaseDto lease2 = new LeaseDto(2, "Inactive");
-
-        List<LeaseDto> leases = Arrays.asList(lease1, lease2);
-
-        when(leaseService.getLeasesByBrokerProfileId(brokerId)).thenReturn(leases);
-
-        // When
-        ResponseEntity<?> responseEntity = leaseController.getLeasesByBrokerProfileId(brokerId);
-
-        // Then
-        assertEquals(HttpStatus.OK.value(), responseEntity.getStatusCodeValue());
-        assertEquals(leases, responseEntity.getBody());
     }*/
 
 

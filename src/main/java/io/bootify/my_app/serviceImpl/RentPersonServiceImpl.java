@@ -1,9 +1,13 @@
 package io.bootify.my_app.serviceImpl;
 
+import io.bootify.my_app.domain.Agreement;
 import io.bootify.my_app.domain.RentPerson;
 import io.bootify.my_app.domain.User;
+import io.bootify.my_app.dto.AgreementDto;
 import io.bootify.my_app.dto.RentPersonDto;
+import io.bootify.my_app.exception.AgreementNotFoundException;
 import io.bootify.my_app.exception.PageNotFoundException;
+import io.bootify.my_app.exception.RentPersonNotFoundException;
 import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.repos.LeaseRepository;
 import io.bootify.my_app.repos.RentPersonRepository;
@@ -62,12 +66,13 @@ public class RentPersonServiceImpl implements RentPersonService {
     }
 
     @Override
-    public Optional<RentPersonDto> getRentPersonById(Integer id) {
-        try {
-            return rentPersonRepository.findById(id)
-                    .map(RentPersonDto::new);
-        } catch (Exception e) {
-            throw new RuntimeException("Error retrieving rent person by ID: " + e.getMessage(), e);
+    public RentPersonDto getRentPersonById(Integer rentPersonId) {
+
+        Optional<RentPerson> optionalRentPerson = rentPersonRepository.findById(rentPersonId);
+        if (optionalRentPerson.isPresent()) {
+            return new RentPersonDto(optionalRentPerson.get());
+        } else {
+            throw new RentPersonNotFoundException("Rent Person not found with ID: " + rentPersonId);
         }
     }
 

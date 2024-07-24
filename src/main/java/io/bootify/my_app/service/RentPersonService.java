@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface RentPersonService {
     public List<RentPersonDto> getAllRentPersons(int pageNo, int pageSize) throws UserNotFound, PageNotFoundException, ResourceNotFoundException;
-    Optional<RentPersonDto> getRentPersonById(Integer id);
+    RentPersonDto getRentPersonById(Integer rentPersonId);
     RentPersonDto createRentPerson(RentPersonDto rentPersonDTO);
     RentPersonDto updateRentPerson(Integer id, RentPersonDto rentPersonDTO);
     void deleteRentPerson(Integer id);

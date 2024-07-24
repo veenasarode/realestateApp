@@ -1,9 +1,8 @@
 package io.bootify.my_app.controller;
 
 
-import io.bootify.my_app.dto.PropertyDto;
-import io.bootify.my_app.dto.RentPersonDto;
-import io.bootify.my_app.dto.ResponseRentPersonDto;
+import io.bootify.my_app.dto.*;
+import io.bootify.my_app.exception.AgreementNotFoundException;
 import io.bootify.my_app.exception.PageNotFoundException;
 import io.bootify.my_app.exception.ResourceNotFoundException;
 import io.bootify.my_app.exception.UserNotFound;
@@ -27,24 +26,26 @@ public class RentPersonController {
     @Autowired
     private RentPersonRepository rentPersonRepository;
     @GetMapping("/{id}")
-    public ResponseEntity<?> getRentPersonById(@PathVariable Integer id) {
+    public ResponseEntity<RentPersonDto> getRentPersonById(@PathVariable Integer id) {
         try {
-            Optional<RentPersonDto> rentPersonById = rentPersonService.getRentPersonById(id);
-            return new ResponseEntity<>(rentPersonById, HttpStatus.OK);
+            RentPersonDto rentPersonDto = this.rentPersonService.getRentPersonById(id);
+            return new ResponseEntity<>(rentPersonDto, HttpStatus.OK);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>("Failed to get rent person: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new AgreementNotFoundException("Rent Person not found with ID: " + id);
         }
     }
 
 
     @PostMapping("/add")
-    public ResponseEntity<?> createRentPerson(@RequestBody RentPersonDto rentPersonDTO) {
+    public ResponseEntity<RentPersonDto> createRentPerson(@RequestBody RentPersonDto rentPersonDTO) {
         try {
             RentPersonDto createdRentPerson = rentPersonService.createRentPerson(rentPersonDTO);
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(createdRentPerson);
+
+            ResponseEntity<RentPersonDto> responseEntity = new ResponseEntity<>(createdRentPerson , HttpStatus.CREATED);
+
+            return responseEntity;
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to create rent person: " + e.getMessage());
+            throw new RuntimeException("Failed to create RentPerson" + e.getMessage()) ;
         }
     }
 
