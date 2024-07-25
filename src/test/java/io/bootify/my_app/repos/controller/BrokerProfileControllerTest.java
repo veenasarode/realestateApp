@@ -137,6 +137,7 @@ public class BrokerProfileControllerTest {
 
 
     @Test
+    @DisplayName("Test Success scenario for delete brokers by Id")
     public void testDeleteBrokerProfileById_Success() throws BrokerProfileNotFoundException {
         Integer brokerProfileId = 1;
         // Mocking behavior of service method
@@ -156,26 +157,32 @@ public class BrokerProfileControllerTest {
         }
     }
 
-    /*@Test
+
+    @Test
     @DisplayName("Test Success scenario for fetching broker by userId")
-    public void testGetByUserId() throws Exception, ResourceNotFoundException {
+    void testGetBrokerProfileByUserId() throws Exception {
         // Given
         Integer userId = 1;
-        Integer brokerId = 20;
 
-        BrokerProfileDto brokerProfileDto = new BrokerProfileDto(brokerId,"ABCD","A235", "Mumbai","Thane");
+        BrokerProfileDto broker1 = new BrokerProfileDto();
+        broker1.setBrokerProfileId(1);
+        broker1.setName("ABC");
 
+        BrokerProfileDto broker2 = new BrokerProfileDto();
+        broker2.setBrokerProfileId(2);
+        broker2.setName("XYZ");
 
-        when(brokerProfileService.getBrokerByUserId(userId)).thenReturn(Collections.singletonList(brokerProfileDto));
+        List<BrokerProfileDto> brokers = Arrays.asList(broker1, broker2);
+
+        when(brokerProfileService.getBrokerByUserId(userId)).thenReturn(brokers);
 
         // When
         ResponseEntity<List<BrokerProfileDto>> response = brokerProfileController.getBrokerProfileByUserId(userId);
 
         // Then
-        verify(brokerProfileService, times(1)).getBrokerByUserId(userId);
-        assertEquals(HttpStatus.OK, response.getStatusCodeValue());
-        assertEquals(brokerProfileDto, response.getBody().get(0));
-    }*/
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(brokers, response.getBody());
+    }
 }
 
 
